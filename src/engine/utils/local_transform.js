@@ -8,24 +8,26 @@
 
 import Transform from "./transform.js";
 
-class LocalTransform {
+class LocalTransform extends Transform {
 
     constructor(globalTransform, parent, recalculate = false) {
         super();
         this.mParent = parent; // the transform that this is relative to
         this.mGlobalTransform = globalTransform; // the transform that holds the absolute position of the object
-        
-        if(!this.mGlobalTransform) console.log(this.mGlobalTransform);
-        if (recalculate) {
-            console.log("test");
-            this.mGlobalTransform.mPosition[0] = this.getXPos();
-            this.mGlobalTransform.mPosition[1] = this.getYPos();
-        } else {
-            console.log("test2");
-            // this.setPosition(this.mGlobalTransform.getPosition());
-            this.mGlobalTransform.setXPos(this.mParent.getXPos() + this.mGlobalTransform.getXPos());
-            this.mGlobalTransform.setYPos(this.mParent.getYPos() + this.mGlobalTransform.getYPos());
-        }
+
+        // if (!this.mGlobalTransform) console.log(this.mGlobalTransform);
+        // if (recalculate) {
+        //     console.log("test");
+        //     // this.mGlobalTransform.mPosition[0] = this.getXPos();
+        //     // this.mGlobalTransform.mPosition[1] = this.getYPos();
+        // } else {
+        //     console.log("test2");
+        //         this.mPosition[0] = this.mGlobalTransform.getXPos();
+        //         this.mPosition[1] = this.mGlobalTransform.getYPos();
+        //     // this.setPosition(this.mGlobalTransform.getPosition());
+        //     // this.mGlobalTransform.setXPos(this.mParent.getXPos() + this.mGlobalTransform.getXPos());
+        //     // this.mGlobalTransform.setYPos(this.mParent.getYPos() + this.mGlobalTransform.getYPos());
+        // }
         this.mScale = this.mGlobalTransform.getSize();     // this is the width (x) and height (y)
         this.mZ = this.mGlobalTransform.get3DPosition();   // must be a positive number, a larger value is closer to the eye
         this.mRotationInRad = this.mGlobalTransform.getRotationInRad(); // in radians!

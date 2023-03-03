@@ -75,7 +75,13 @@ class MyGame extends engine.Scene {
         this.mAllObjs = new engine.GameObjectSet();
         this.mPlatforms = new engine.GameObjectSet();
 
-        this.createBounds();  // added to mPlatforms
+        // this.createBounds();  // added to mPlatforms
+
+
+        let r = new engine.TextureRenderable(this.kTargetTexture);
+        this.mTarget = new engine.GameObject(r);
+        let xf = r.getXform();
+        xf.setSize(3, 3);
 
         this.mHero = new Hero(this.kMinionSprite);
         this.mAllObjs.addToSet(this.mHero);
@@ -92,14 +98,14 @@ class MyGame extends engine.Scene {
         // particle systems
         this.mParticles = new engine.ParticleSet();
 
-        let y = 70;
-        let x = 10;
-        for (let i = 1; i <= 5; i++) {
-            let m = new Minion(this.kMinionSprite, x, y, ((i % 2) !== 0));
-            this.mParticles.addEmitterAt(x, y, 200, _createParticle);
-            x += 20;
-            this.mAllObjs.addToSet(m);
-        }
+        // let y = 70;
+        // let x = 10;
+        // for (let i = 1; i <= 5; i++) {
+        //     let m = new Minion(this.kMinionSprite, x, y, ((i % 2) !== 0));
+        //     this.mParticles.addEmitterAt(x, y, 200, _createParticle);
+        //     x += 20;
+        //     this.mAllObjs.addToSet(m);
+        // }
 
         this.mMsg = new engine.FontRenderable("Status Message");
         this.mMsg.setColor([0, 0, 0, 1]);
@@ -234,7 +240,7 @@ class MyGame extends engine.Scene {
             ", " + this.mChild.getLocalXform().getXPos().toFixed(2) + ")";
         this.mMsg.setText(msg);
 
-        console.log(this.mChild.getLocalXform().mPosition[0]);
+        // console.log(this.mChild.getLocalXform().mPosition[0]);
 
         this.mShapeMsg.setText(obj.getRigidBody().getCurrentState());
     }

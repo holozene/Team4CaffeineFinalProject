@@ -29,10 +29,6 @@ MyGame.prototype.createBounds = function() {
     for (y = 8; y < 90; y+=12) 
         this.wallAt(x, y, w);
     
-    let r = new engine.TextureRenderable(this.kTargetTexture);
-    this.mTarget = new engine.GameObject(r);
-    let xf = r.getXform();
-    xf.setSize(3, 3);
 }
 
 MyGame.prototype.wallAt = function (x, y, w) {
