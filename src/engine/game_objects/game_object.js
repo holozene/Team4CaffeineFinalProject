@@ -7,18 +7,7 @@
 "use strict";
 import BoundingBox from "../utils/bounding_box.js";
 
-
 class GameObject {
-    /**
-     * @classdesc Template for the behavior and appearance of a game object, intened to be extended for game specific use. Has support for pixel-perfect collision and physics
-     * <p>Found in Chapter 6, page 268 of the textbook</p>
-     * Example:
-     * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/BookSourceCode/chapter6/6.1.game_objects/index.html 6.1 Game Objects}
-     * 
-     * @constructor
-     * @param {Renderable} renderable - the renderable to be associated with this GameObject
-     * @returns {GameObject} a new instance of GameObject
-     */
     constructor(renderable) {
         this.mRenderComponent = renderable;
         this.mVisible = true;
@@ -26,91 +15,44 @@ class GameObject {
         this.mRigidBody = null;
         this.mDrawRenderable = true;
         this.mDrawRigidShape = false;
-        this.parent = null;
-        this.children = [];
+        this.mParent = null;
+        this.mChildren = [];
     }
-    /**
-     * Returns the Transform of the Renderable associated with this GameObject
-     * @instance
-     * @returns {Transform} the Transform of this GameObject
-     */
-    getXform() { return this.mRenderComponent.getXform(); }
 
-    /**
-     * Returns the BoundingBox for this gameObject
-     * @method
-     * @returns {BoundingBox} a new copy of the bounding box of this GameObject
-     */
+    setParent(parent, recalculateTransform) {
+        this.mParent = parent;
+        this.mRenderComponent.setLocalXform(parent.getXform());
+        if (keepTransform) {
+
+        }
+    }
+    getParent() { return this.mParent }
+    setChild(child, keepTransform) { this.mChildren.push() }
+    getChildren() { return this.mChildren }
+
+    getParentXform() { return this.mParent.mRenderComponent.getXform()}
+    getLocalXform() { return this.mRenderComponent.getLocalXform(); }
+
+    getXform() { return this.mRenderComponent.getXform(); }
     getBBox() {
         let xform = this.getXform();
         let b = new BoundingBox(xform.getPosition(), xform.getWidth(), xform.getHeight());
         return b;
     }
-
-    /**
-     * Sets the visibility of this gameObject to true or false
-     * @method
-     * @param {boolean} f - boolean to set if this gameObject is visibile or not
-     */
     setVisibility(f) { this.mVisible = f; }
-
-    /**
-     * Returns the visibility of this gameObject
-     * @method
-     * @returns {boolean} mVisible - the visivility of this gameObject
-     */
     isVisible() { return this.mVisible; }
 
-    /**
-     * Changes this gameObject's current facing direction
-     * @method
-     * @param {vec2} f - vector that will be put into mCurrentFrontDir after being normalized
-     */
     setCurrentFrontDir(f) { vec2.normalize(this.mCurrentFrontDir, f); }
-
-    /**
-     * Returns the front direction of this gameObject
-     * @method
-     * @returns {vec2} mCurrentFrontDir - the current front direction of this gameObject
-     */
     getCurrentFrontDir() { return this.mCurrentFrontDir; }
 
-    /**
-     * Returns the renderable associated with this gameObject
-     * @returns {Renderable} mRenderComponent - the renderable associated with this gameObject
-     */
     getRenderable() { return this.mRenderComponent; }
 
-    /**
-     * Sets the rigid body this gameObject will use
-     * @method
-     * @param {RigidShape} r - the rigid body
-     */
     setRigidBody(r) { this.mRigidBody = r; }
-
-    /**
-     * Returns the RigidShape of this gameObject 
-     * @method
-     * @returns {RigidShape} mRigidBody - the RigidShape of this gameObject 
-     */
     getRigidBody() { return this.mRigidBody; }
 
-    /**
-     * Switches whether this gameObject's renderable is drawn
-     * @method
-     */
     toggleDrawRenderable() { this.mDrawRenderable = !this.mDrawRenderable; }
-
-    /**
-     * Switches whether this gameObject's rigid shape is drawn
-     * @method
-     */
     toggleDrawRigidShape() { this.mDrawRigidShape = !this.mDrawRigidShape; }
-    
-    /**
-     * Draws this gameObject if it is visible the draw flags are set to true
-     * @param {Camera} aCamera  - The camera 
-     */
+
     draw(aCamera) {
         if (this.isVisible()) {
             if (this.mDrawRenderable)
@@ -119,10 +61,7 @@ class GameObject {
                 this.mRigidBody.draw(aCamera);
         }
     }
-    /**
-     * Method called by Gameloop, updates the rigid body of this gameObject
-     * @method
-     */
+
     update() {
         // simple default behavior
         if (this.mRigidBody !== null)
@@ -130,13 +69,6 @@ class GameObject {
     }
 
     // Support for per-pixel collision
-    /**
-     * Determines if this GameObject has an overlapping pixel with another GameObject
-     * @method
-     * @param {GameObject} otherObj  - the other GameObject
-     * @param {vec2} wcTouchPos  - vector to store the first world coordinates where the pixels touch
-     * @returns {boolean} whether this GameObject has a pixel overlapping otherObj
-     */
     pixelTouches(otherObj, wcTouchPos) {
         // only continue if both objects have getColorArray defined 
         // if defined, should have other texture intersection support!

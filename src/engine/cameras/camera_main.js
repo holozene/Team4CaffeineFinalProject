@@ -11,11 +11,7 @@ import { eBoundCollideStatus } from "../utils/bounding_box.js";
 
 import CameraState from "./camera_state.js";
 
-/**
- * Enum for viewport properties index
- * @memberof Camera
- * @enum
- */
+
 const eViewport = Object.freeze({
     eOrgX: 0,
     eOrgY: 1,
@@ -45,23 +41,6 @@ class Camera {
     //      
     //  wcHeight = wcWidth * viewport[3]/viewport[2]
     //
-
-    /**
-     * @classdesc Class that encapsulates the scaling and translation of the portions of the game world that are visible.
-     * <p>Found in Chapter 3, page 102 of the textbook</p>
-     * Examples:
-     * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/BookSourceCode/chapter3/3.5.camera_objects/index.html 3.5 Camera Objects}, 
-     * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/BookSourceCode/chapter7/7.4.multiple_cameras/index.html 7.4 Multiple Cameras}
-     * @constructor
-     * @param {vec2} wcCenter - center position of Camera in world coordinates
-     * @param {float} wcWidth - width of the world, implicitly defines the world height
-     * @param {float[]} viewportArray - an array of 4 elements
-     *      [0] [1]: (x,y) position of lower left corner on the canvas (in pixel)
-     *      [2]: width of viewport
-     *      [3]: height of viewport
-     * @param {float} bound - viewport border
-     * @returns {Camera} a new Camera instance
-     */
     constructor(wcCenter, wcWidth, viewportArray, bound) {
         this.mCameraState = new CameraState(wcCenter, wcWidth);
         this.mCameraShake = null;
@@ -92,57 +71,20 @@ class Camera {
     }
 
     // #region Basic getter and setters
-    /**
-     * Sets the world coordinate center for this Camera
-     * @method
-     * @param {float} xPos - the new center x value
-     * @param {float} yPos - the new center y value
-     */
     setWCCenter(xPos, yPos) {
         let p = vec2.fromValues(xPos, yPos);
         this.mCameraState.setCenter(p);
     }
-    /**
-     * Returns the center world coordinates for this Camera
-     * @method
-     * @returns {vec2} The center world coordinates
-     */
     getWCCenter() { return this.mCameraState.getCenter(); }
-
-    /**
-     * Returns the world coordinate center in pixel coordinates
-     * @method
-     * @returns {vec3} The world coordinate center in pixel coordinates
-     */
     getWCCenterInPixelSpace() { return this.mRenderCache.mCameraPosInPixelSpace; }
-    /**
-     * Sets the world coordinate width of this Camera
-     * @method
-     * @param {integer} width - The new width for this Camera
-     */
     setWCWidth(width) { this.mCameraState.setWidth(width); }
-    /**
-     * Returns the world coordinate width of this Camera
-     * @method
-     * @returns {float} The current width of this Camera
-     */
     getWCWidth() { return this.mCameraState.getWidth(); }
-    /**
-     * Returns the world coordinate height of this Camera
-     * @method
-     * @returns {float} The current height of this Camera
-     */
     getWCHeight() {
         // viewportH/viewportW
         let ratio = this.mViewport[eViewport.eHeight] / this.mViewport[eViewport.eWidth];
         return this.mCameraState.getWidth() * ratio;
     }
-    /**
-     * Sets the Camera viewport
-     * @method
-     * @param {float[]} viewportArray 
-     * @param {float} bound 
-     */
+
     setViewport(viewportArray, bound) {
         if (bound === undefined) {
             bound = this.mViewportBound;
@@ -157,11 +99,7 @@ class Camera {
         this.mScissorBound[2] = viewportArray[2];
         this.mScissorBound[3] = viewportArray[3];
     }
-    /**
-     * Returns the Camera viewport
-     * @method
-     * @returns {float[]} Camera viewport [x,y,width,height] 
-     */
+
     getViewport() {
         let out = [];
         out[0] = this.mScissorBound[0];
@@ -172,21 +110,12 @@ class Camera {
     }
 
     setBackgroundColor(newColor) { this.mBGColor = newColor; }
-    /**
-     * Return the background color of this Camera
-     * @method
-     * @returns {float[]} mBGColor - background color of this Camera
-     */
     getBackgroundColor() { return this.mBGColor; }
     // #endregion
 
     // #region Compute and access camera transform matrix
 
     // call before you start drawing with this camera
-    /**
-     * Initializes the camera to begin drawing
-     * @method
-     */
     setViewAndCameraMatrix() {
         let gl = glSys.get();
         // Step A1: Set up the viewport: area on canvas to be drawn
@@ -232,11 +161,6 @@ class Camera {
     }
 
     // Getter for the View-Projection transform operator
-    /**
-     * Return the transformed Camera matrix
-     * @method
-     * @returns {mat4} mCameraMatrix - scaled and translated Camera matrix 
-     */
     getCameraMatrix() {
         return this.mCameraMatrix;
     }
@@ -244,13 +168,6 @@ class Camera {
 
     // #region utilities WC bounds: collide and clamp
     // utilities
-    /**
-     * Detect if parameter Transform collides with the border of this Camera
-     * @method
-     * @param {Transform} aXform - Transform to detect collision status
-     * @param {float} zone - distance from the Camera border to collide with
-     * @returns {eBoundCollideStatus} Collision status for aXform and this Camera
-     */
     collideWCBound(aXform, zone) {
         let bbox = new BoundingBox(aXform.getPosition(), aXform.getWidth(), aXform.getHeight());
         let w = zone * this.getWCWidth();
@@ -261,13 +178,6 @@ class Camera {
 
     // prevents the xform from moving outside of the WC boundary.
     // by clamping the aXfrom at the boundary of WC, 
-    /**
-     * Moves the Transform parameter back inside of the WC boundary
-     * @method
-     * @param {Transform} aXform - Transform to detect collision and clamp
-     * @param {float} zone - distance from the Camera border to collide with
-     * @returns {eBoundCollideStatus} Collision status for aXform and this Camera
-     */
     clampAtBoundary(aXform, zone) {
         let status = this.collideWCBound(aXform, zone);
         if (status !== eBoundCollideStatus.eInside) {

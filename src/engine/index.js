@@ -20,7 +20,6 @@ import * as defaultResources from "./resources/default_resources.js";
 import * as input from "./components/input.js";
 import * as physics from "./components/physics.js";
 import * as particleSystem from "./components/particle_system.js";
-import * as layer from "./components/layer.js";
 
 // general utilities
 import Scene from "./scene.js";
@@ -52,8 +51,6 @@ import { eAnimationType } from "./renderables/sprite_animate_renderable.js";
 // game objects
 import GameObject from "./game_objects/game_object.js";
 import GameObjectSet from "./game_objects/game_object_set.js";
-import TiledGameObject from "./game_objects/tiled_game_object.js";
-import ParallaxGameObject from "./game_objects/parallax_game_object.js";
 
 // light and lightSet
 import Light from "./lights/light.js";
@@ -81,23 +78,7 @@ import * as vertexBuffer from "./core/vertex_buffer.js";
 import * as shaderResources from "./core/shader_resources.js";
 import * as loop from "./core/loop.js";
 
-/**
- * Serves as central export of the entire engine,
- * client programs can simply import this file 
- * for all symbols defined in the engine
- * 
- * <p>Found in Chapter 3, page 69 of the textbook </p>
- * Example:
- * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/BookSourceCode/chapter3/3.1.renderable_objects/index.html 3.1 Renderable Objects}
- * @module index
- */
-
 // general engine utilities
-/**
- * Initializes all the parts of the engine
- * @static
- * @param {string} htmlCanvasID - name of the html canvas element
- */
 function init(htmlCanvasID) {
     glSys.init(htmlCanvasID);
     vertexBuffer.init();
@@ -105,15 +86,9 @@ function init(htmlCanvasID) {
     audio.init();
     shaderResources.init();
     defaultResources.init();
-    layer.init();
 }
 
-/**
- * Calls clean up functions for all parts of the engine
- * @static
- */
 function cleanUp() {
-    layer.cleanUp();
     loop.cleanUp();
     shaderResources.cleanUp();
     defaultResources.cleanUp();
@@ -123,11 +98,6 @@ function cleanUp() {
     glSys.cleanUp();
 }
 
-/**
- * Clears the canvas and set it to a single color
- * @static
- * @param {vec4} color - [R,G,B,A] color array
- */
 function clearCanvas(color) {
     let gl = glSys.get();
     gl.clearColor(color[0], color[1], color[2], color[3]);  // set the color to be cleared
@@ -141,7 +111,7 @@ export default {
     audio, text, xml, texture, font, defaultResources,
 
     // engine components
-    input, particleSystem, layer,
+    input, particleSystem,
 
     // general utils 
     Lerp, LerpVec2, Oscillate, Shake, ShakeVec2,
@@ -154,7 +124,7 @@ export default {
     FontRenderable, LineRenderable, LightRenderable, IllumRenderable,
 
     // Game Objects
-    GameObject, GameObjectSet,TiledGameObject, ParallaxGameObject,
+    GameObject, GameObjectSet,
 
     // Lights
     Light, LightSet,

@@ -13,28 +13,7 @@ import * as map from "../core/resource_map.js";
 let has = map.has;
 let get = map.get;
 
-/**
- * Defines the logic for loading and interacting with file texture resources
- * 
- * <p><strong>Exports the has() and get() functions from </strong> 
- * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/AdditionalMaterials/Documentation/module-resource_map.html resource map}</p>
- * 
- * <p>Found in Chapter 5, page 204 of the textbook</p>
- * Example:
- * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/BookSourceCode/chapter5/5.1.texture_shaders/index.html 5.1 Texture Shaders}
- * @module texture
- */
-
-
 class TextureInfo {
-    /**
-     * @classdesc Object for convenient communication of a texture's properties
-     * @memberof texture
-     * @param {integer} w - the pixel width of the texture 
-     * @param {integer} h - the pixel height of the texture
-     * @param {gl.TEXTUREI} id - webGL id for the texture
-     * @returns {TextureInfo} a new TextureInfo instance
-     */
     constructor(w, h, id) {
         this.mWidth = w;
         this.mHeight = h;
@@ -43,18 +22,9 @@ class TextureInfo {
     }
 }
 
-
 /*
  * This converts an image to the webGL texture format. 
  * This should only be called once the texture is loaded.
- */
-/**
- * This converts an image to the webGL texture format. 
- * This should only be called once the texture is loaded
- * @export texture
- * @ignore
- * @param {string} path - the path to the image file
- * @param {Image} image - Image object with the image file data
  */
 function processLoadedImage(path, image) {
     let gl = glSys.get();
@@ -85,41 +55,30 @@ function processLoadedImage(path, image) {
     map.set(path, texInfo);
 }
 
-// 
-/**
- * Loads a texture into the resource map so that it can be drawn
- * @static
- * @param {string} textureName - the path to the image file
- * @returns {Promise} promise to process the texture
- */
+// Loads an texture so that it can be drawn.
 function load(textureName) {
     let texturePromise = null;
     if (map.has(textureName)) {
         map.incRef(textureName);
     } else {
         map.loadRequested(textureName);
-        let image = new Image();
+    let image = new Image();
         texturePromise = new Promise(
-            function (resolve) {
-                image.onload = resolve;
-                image.src = textureName;
-            }).then(
-                function resolve() {
+        function(resolve) {
+            image.onload = resolve; 
+            image.src = textureName;
+        }).then(
+            function resolve() { 
                     processLoadedImage(textureName, image);
                 }
-            );
-        map.pushPromise(texturePromise);
+        );
+    map.pushPromise(texturePromise);
     }
     return texturePromise;
 }
 
 // Remove the reference to allow associated memory 
 // be available for subsequent garbage collection
-/**
- * Remove the reference to the texture allow for garbage collection
- * @static
- * @param {string} textureName - the path to the image file
- */
 function unload(textureName) {
     let texInfo = get(textureName);
     if (map.unload(textureName)) {
@@ -128,18 +87,12 @@ function unload(textureName) {
     }
 }
 
-/**
- * Activate a texture file within the webGL system
- * @static
- * @param {string} textureName - the path to the image file
- * @param {gl.TEXTUREI} textureUnit - the texture unit to be activated, defaults to TEXTURE0
- */
 function activate(textureName, textureUnit = glSys.get().TEXTURE0) {
     let gl = glSys.get();
     let texInfo = get(textureName);
 
     // Binds our texture reference to the current webGL texture functionality
-    gl.activeTexture(textureUnit);  // activate the WebGL texture unit
+    gl.activeTexture(textureUnit);  // activate the WebGL texture unit  
     gl.bindTexture(gl.TEXTURE_2D, texInfo.mGLTexID);
 
     // To prevent texture wrappings
@@ -154,21 +107,13 @@ function activate(textureName, textureUnit = glSys.get().TEXTURE0) {
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 }
-/**
- * Deactivate the webGL texture system
- * @static
- */
+
 function deactivate() {
     let gl = glSys.get();
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-/**
- * Returns the one dimensional array with color information for all pixels
- * @static
- * @param {string} textureName - the path to the image file
- * @returns {Uint8Array} array with color information for all pixels
- */
+
 function getColorArray(textureName) {
     let gl = glSys.get();
     let texInfo = get(textureName);
@@ -195,7 +140,7 @@ function getColorArray(textureName) {
 export {
     has, get, load, unload,
 
-    TextureInfo,
+    TextureInfo,    
 
     activate, deactivate,
 

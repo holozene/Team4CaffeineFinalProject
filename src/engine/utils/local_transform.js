@@ -6,13 +6,13 @@
  */
 "use strict";
 
-class Transform {
-    
-    constructor() {
-        this.mPosition = vec2.fromValues(0, 0);  // this is the translation
-        this.mScale = vec2.fromValues(1, 1);     // this is the width (x) and height (y)
-        this.mZ = 0.0;                           // must be a positive number, a larger value is closer to the eye
-        this.mRotationInRad = 0.0;               // in radians!
+import Transform from "./transform";
+
+class LocalTransform extends Transform {
+
+    constructor(parent) {
+        super();
+        this.parent = parent; // a transform that this is relative to
     }
 
     cloneTo(aXform) {
@@ -23,7 +23,7 @@ class Transform {
     }
 
     setPosition(xPos, yPos) { this.setXPos(xPos); this.setYPos(yPos); }
-    getPosition() { return this.mPosition; }
+    getPosition() { return vec2.fromValues(this.getXPos(), this.getYPos()); }
     get3DPosition() { return vec3.fromValues(this.getXPos(), this.getYPos(), this.getZPos()); }
     getXPos() { return this.mPosition[0]; }
     setXPos(xPos) { this.mPosition[0] = xPos; }
@@ -34,7 +34,7 @@ class Transform {
     setZPos(d) { this.mZ = d; }
     getZPos() { return this.mZ; }
     incZPosBy(delta) { this.mZ += delta; }
-    
+
     setSize(width, height) {
         this.setWidth(width);
         this.setHeight(height);
@@ -65,9 +65,9 @@ class Transform {
     incRotationByRad(deltaRad) {
         this.setRotationInRad(this.mRotationInRad + deltaRad);
     }
-    getRotationInRad() {  return this.mRotationInRad; }
+    getRotationInRad() { return this.mRotationInRad; }
     getRotationInDegree() { return this.mRotationInRad * 180.0 / Math.PI; }
-    
+
     // returns the matrix the concatenates the transformations defined
     getTRSMatrix() {
         // Creates a blank identity matrix
@@ -87,4 +87,4 @@ class Transform {
     }
 }
 
-export default Transform;
+export default LocalTransform;

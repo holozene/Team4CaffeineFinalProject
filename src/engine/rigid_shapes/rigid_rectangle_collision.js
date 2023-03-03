@@ -25,10 +25,10 @@ let mCollisionInfoR2 = new CollisionInfo();
 
 /**
  * Decides on which collision function to call based on the type of shape passed
- * @memberof RigidRectangle 
- * @param {RigidShape} otherShape - The other shape to test collision
- * @param {CollisionInfo} collisionInfo - Where the collision information is stored
- * @returns {boolean} the results of the collision
+ * @memberOf RigidRectangle 
+ * @param {RigidShape} otherShape The other shape that's involved
+ * @param {CollisionInfo} collisionInfo Where the collision information is stored
+ * @returns {Boolean} The results of the collision
  */
 RigidRectangle.prototype.collisionTest = function (otherShape, collisionInfo) {
     let status = false;
@@ -41,10 +41,9 @@ RigidRectangle.prototype.collisionTest = function (otherShape, collisionInfo) {
 }
 
 /**
- * Calculates a support point for a point on the edge of this RigidRectangle
- * @memberof RigidRectangle
- * @param {vec2} dir - the direction of the support point 
- * @param {vec2} ptOnEdge - a point on the edge of this RigidRectangle 
+ * Finds the support point.
+ * @param {type} dir
+ * @param {type} ptOnEdge
  */
 RigidRectangle.prototype.findSupportPoint = function (dir, ptOnEdge) {
     // the longest project length
@@ -67,13 +66,15 @@ RigidRectangle.prototype.findSupportPoint = function (dir, ptOnEdge) {
     }
 }
 
-
 /**
- * Find the shortest axis of penetration between this RigidRectangle and another
+ * /**
+ * Find the shortest axis that overlapping
  * @memberOf RigidRectangle
- * @param {RigidRectangle} otherRect - the other rectangle being tested
- * @param {CollisionInfo} collisionInfo - Record of the collision information
- * @returns {boolean} true if there is overlap in all four directions.
+ * @param {RigidRectangle} otherRect  Another rectangle that being tested
+ * @param {CollisionInfo} collisionInfo  Record the collision information
+ * @returns {Boolean} True if has overlap part in all four directions.
+ * this code is referenced and adapted from 
+ * http://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-oriented-rigid-bodies--gamedev-8032
  */
 RigidRectangle.prototype.findAxisLeastPenetration = function (otherRect, collisionInfo) {
     let n;
@@ -118,12 +119,12 @@ RigidRectangle.prototype.findAxisLeastPenetration = function (otherRect, collisi
 }
     
 /**
- * Check for collision between a RigidRectangle and another RigidRectangle
- * @memberof RigidRectangle
- * @param {RigidRectangle} r1 - RigidRectangle object to check for collision status
- * @param {RigidRectangle} r2 - RigidRectangle object to check for collision status against
- * @param {CollisionInfo} collisionInfo - the information object for the collision
- * @returns {boolean} true if collision occurs
+ * Check for collision between RigidRectangle and RigidRectangle
+ * @param {RigidRectangle} r1 RigidRectangle object to check for collision status
+ * @param {RigidRectangle} r2 RigidRectangle object to check for collision status against
+ * @param {CollisionInfo} collisionInfo Collision info of collision
+ * @returns {Boolean} true if collision occurs
+ * @memberOf RigidRectangle
  */   
 RigidRectangle.prototype.collideRectRect = function (r1, r2, collisionInfo) {
     let status1 = false;

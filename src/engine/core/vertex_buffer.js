@@ -9,26 +9,8 @@
 
 import * as glSys from "./gl.js";
 
-/**
- * Defines the module that supports the loading and using of the buffer that 
- * contains vertex positions of a square onto the gl context
- * 
- * <p>Found in Chapter 2, page 31 of the textbook</p>
- * Example:
- * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/BookSourceCode/chapter2/2.3.draw_one_square/index.html 2.3 Elementary Drawing}
- * 
- * @module vertex_buffer
- */
-
-
 // reference to the vertex positions for the square in the gl context
 let mGLVertexBuffer = null;
-
-/**
- * Returns a reference to the vertex positions for the square in the gl context
- * @export vertex_buffer
- * @returns {WebGLBuffer} the vertex buffer
- */
 function get() { return mGLVertexBuffer; }
 
 // First: define the vertices for a square
@@ -42,11 +24,6 @@ let mVerticesOfSquare = [
 
 // reference to the texture coordinates for the square vertices in the gl context
 let mGLTextureCoordBuffer = null;
-/**
- * Returns the reference to the texture coordinates for the square vertices in the gl context
- * @export vertex_buffer
- * @returns {WebGlBuffer} the texture coordinate buffer
- */
 function getTexCoord() { return mGLTextureCoordBuffer; }
 
 // Second: define the corresponding texture coordinates
@@ -59,22 +36,12 @@ let mTextureCoordinates = [
 
 // For line drawing: to support physics engine debugging
 let mLineVertexBuffer = null;
-
-/**
- * Returns the reference to the line vertex buffer to support physics engine debugging
- * @export vertex_buffer
- * @returns {WebGlBuffer} the line vertex buffer
- */
 function getLineVertexBuffer() { return mLineVertexBuffer; }
 let mVerticesOfLine = [
      0.5, 0.5, 0.0,
     -0.5, -0.5, 0.0
 ];
 
-/**
- * Delete the various buffers and clear references to them
- * @export vertex_buffer
- */
 function cleanUp() {
     let gl = glSys.get();
     if (mGLVertexBuffer !== null) {
@@ -93,10 +60,6 @@ function cleanUp() {
     }
 }
 
-/**
- * Initializes and bind the various buffers
- * @export vertex_buffer
- */
 function init() {
     let gl = glSys.get();
 

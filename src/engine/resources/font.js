@@ -11,28 +11,12 @@
 import * as texture from "./texture.js";
 import * as xml from "./xml.js";
 
-/**
- * Logics for loading font into the resource_map,
- * note that "font" consists of two files: the bitmap font image and the associated xml descriptor file
- * <p>Found in Chapter 5, page 245 of the textbook</p> 
- * Example:
- * {@link https://apress.github.io/build-your-own-2d-game-engine-2e/BookSourceCode/chapter5/5.4.font_support/index.html 5.4 Font Support}
- * @module font 
- */
-
-
 let kImageExt = ".png";  // extension for the bitmap font image
 let kDescExt = ".fnt";   // extension for the bitmap font description
-
 
 // for convenient communication of per-character information
 // all size returned are in normalize unit (range between 0 to 1)
 class CharacterInfo {
-    /**
-     * @classdesc Object for convenient communication of per-character information,
-     * all size returned are in normalize unit (range between 0 to 1)
-     * @returns {CharacterInfo} a new CharacterInfo instance
-     */
     constructor() {
         // in texture coordinate (0 to 1) maps to the entire image
         this.mTexCoordLeft = 0;
@@ -51,26 +35,9 @@ class CharacterInfo {
     }
 }
 
-/**
- * Returns the fontName with ".png" appened
- * @static
- * @param {string} fontName - the path to the font files
- * @returns {string} fontName with file extension
- */
 function imageName(fontName) { return fontName+kImageExt;}
-/**
- * Returns the path of the font description file with ".fnt" appened
- * @static
- * @param {string} fontName - the path to the font files
- * @returns {string} path to font description file
- */
 function descName(fontName) { return fontName+kDescExt;}
 
-/**
- * Load the font image as a texture and the font description as an XMLDocument
- * @static
- * @param {string} fontName - path to the font image and description files
- */
 function load(fontName) {
     texture.load(imageName(fontName));
     xml.load(descName(fontName));
@@ -78,33 +45,15 @@ function load(fontName) {
 
 // Remove the reference to allow associated memory 
 // be available for subsequent garbage collection
-/**
- * Unload the font to allow for garbage collection
- * @static
- * @param {string} fontName - path to the font image and description files
- */
 function unload(fontName) {
     texture.unload(imageName(fontName));
     xml.unload(descName(fontName));
 }
 
-/**
- * Returns whether the font is already in the resource map
- * @static
- * @param {string} fontName - path to the font image and description files
- * @returns {boolean} true if the font image and font description are loaded
- */
 function has(fontName) {
     return texture.has(imageName(fontName)) && xml.has(descName(fontName));
 }
 
-/**
- * Returns a CharacterInfo object with the size and texel information for the character texture
- * @static
- * @param {string} fontName - path to the font image and description files
- * @param {string} aChar - the single character (code) to get information for
- * @returns {CharacterInfo} a new instance of CharacterInfo, null if unsuccessful
- */
 function getCharInfo(fontName, aChar) {
     let returnInfo = null;
     let fontInfo = xml.get(descName(fontName));
