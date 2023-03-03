@@ -20,15 +20,12 @@ class Renderable {
 
     draw(camera) {
         let gl = glSys.get();
-        this.mShader.activate(this.mColor, this.getLocalXform().getTRSMatrix(), camera.getCameraMatrix());  // always activate the shader first!
+        this.mShader.activate(this.mColor, this.getXform().getTRSMatrix(), camera.getCameraMatrix());  // always activate the shader first!
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    getLocalXform(transform) { this.mLocalXform = transform }
-    setLocalXform() {
-        if (this.mLocalXform) return this.mLocalXform;
-        else return this.mXform // if localXform is null, just return the globalxform
-    }
+    setLocalXform(transform) { this.mLocalXform = transform }
+    getLocalXform() { return this.mLocalXform; }
 
     getXform() { return this.mXform; }
     setColor(color) { this.mColor = color; }

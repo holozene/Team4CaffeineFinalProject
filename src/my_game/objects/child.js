@@ -15,8 +15,8 @@ class Child extends WASDObj {
         this.kDelta = 0.3;
         this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
-        this.mRenderComponent.getXform().setPosition(60, 35);
-        this.mRenderComponent.getXform().setSize(2, 2);
+        this.mRenderComponent.getXform().setPosition(6, 9);
+        this.mRenderComponent.getXform().setSize(2, 2.11);
         this.mRenderComponent.setElementPixelPositions(0, 120, 0, 180);
 
         let r = new engine.RigidRectangle(this.getXform(), 2, 2);

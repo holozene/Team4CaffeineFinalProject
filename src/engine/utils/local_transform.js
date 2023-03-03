@@ -6,13 +6,29 @@
  */
 "use strict";
 
-import Transform from "./transform";
+import Transform from "./transform.js";
 
-class LocalTransform extends Transform {
+class LocalTransform {
 
-    constructor(parent) {
+    constructor(globalTransform, parent, recalculate = false) {
         super();
-        this.parent = parent; // a transform that this is relative to
+        this.mParent = parent; // the transform that this is relative to
+        this.mGlobalTransform = globalTransform; // the transform that holds the absolute position of the object
+        
+        if(!this.mGlobalTransform) console.log(this.mGlobalTransform);
+        if (recalculate) {
+            console.log("test");
+            this.mGlobalTransform.mPosition[0] = this.getXPos();
+            this.mGlobalTransform.mPosition[1] = this.getYPos();
+        } else {
+            console.log("test2");
+            // this.setPosition(this.mGlobalTransform.getPosition());
+            this.mGlobalTransform.setXPos(this.mParent.getXPos() + this.mGlobalTransform.getXPos());
+            this.mGlobalTransform.setYPos(this.mParent.getYPos() + this.mGlobalTransform.getYPos());
+        }
+        this.mScale = this.mGlobalTransform.getSize();     // this is the width (x) and height (y)
+        this.mZ = this.mGlobalTransform.get3DPosition();   // must be a positive number, a larger value is closer to the eye
+        this.mRotationInRad = this.mGlobalTransform.getRotationInRad(); // in radians!
     }
 
     cloneTo(aXform) {
@@ -25,12 +41,25 @@ class LocalTransform extends Transform {
     setPosition(xPos, yPos) { this.setXPos(xPos); this.setYPos(yPos); }
     getPosition() { return vec2.fromValues(this.getXPos(), this.getYPos()); }
     get3DPosition() { return vec3.fromValues(this.getXPos(), this.getYPos(), this.getZPos()); }
-    getXPos() { return this.mPosition[0]; }
-    setXPos(xPos) { this.mPosition[0] = xPos; }
-    incXPosBy(delta) { this.mPosition[0] += delta; }
-    getYPos() { return this.mPosition[1]; }
-    setYPos(yPos) { this.mPosition[1] = yPos; }
-    incYPosBy(delta) { this.mPosition[1] += delta; }
+    getXPos() { return this.mPosition[0] - this.mParent.getXPos(); } // when getting child position, calculate it using parent position
+    setXPos(xPos) {
+        this.mPosition[0] = xPos;
+        this.mGlobalTransform.setXPos(this.mParent.getXPos() + xPos); // the global location of this object = 
+        console.log(this.mGlobalTransform.getXPos());
+    }
+    incXPosBy(delta) {
+        this.mPosition[0] += delta;
+        this.mGlobalTransform.incXPosBy(delta);
+    }
+    getYPos() { return this.mPosition[1] - this.mParent.getYPos(); }
+    setYPos(yPos) {
+        this.mPosition[1] = yPos;
+        this.mGlobalTransform.incYPosBy(this.mParent.getYPos() + yPos);
+    }
+    incYPosBy(delta) {
+        this.mPosition[1] += delta;
+        this.mGlobalTransform.incYPosBy(delta);
+    }
     setZPos(d) { this.mZ = d; }
     getZPos() { return this.mZ; }
     incZPosBy(delta) { this.mZ += delta; }
@@ -63,7 +92,7 @@ class LocalTransform extends Transform {
         this.incRotationByRad(deltaDegree * Math.PI / 180.0);
     }
     incRotationByRad(deltaRad) {
-        this.setRotationInRad(this.mRotationInRad + deltaRad);
+        this.setRotationInRad(this.getRotationInRad() + deltaRad);
     }
     getRotationInRad() { return this.mRotationInRad; }
     getRotationInDegree() { return this.mRotationInRad * 180.0 / Math.PI; }

@@ -84,7 +84,9 @@ class MyGame extends engine.Scene {
         this.mChild = new Child(this.kMinionSprite);
         this.mAllObjs.addToSet(this.mChild);
 
-        // this.mHero.setChild(this.mChild, false);
+        console.log(this.mChild.getXform());
+        this.mChild.setParent(this.mHero, false);
+        console.log(this.mChild.getLocalXform());
 
 
         // particle systems
@@ -155,9 +157,9 @@ class MyGame extends engine.Scene {
         if (engine.input.isKeyClicked(engine.input.keys.V)) {
             engine.physics.toggleHasMotion();
         }
-        if (engine.input.isKeyClicked(engine.input.keys.H)) {
-            this.randomizeVelocity();
-        }
+        // if (engine.input.isKeyClicked(engine.input.keys.H)) {
+        //     this.randomizeVelocity();
+        // }
 
         if (engine.input.isKeyClicked(engine.input.keys.Left)) {
             this.mCurrentObj -= 1;
@@ -171,45 +173,45 @@ class MyGame extends engine.Scene {
         }
 
         let obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
-        if (engine.input.isKeyPressed(engine.input.keys.Y)) {
-            this.incShapeSize(obj, kBoundDelta);
-        }
-        if (engine.input.isKeyPressed(engine.input.keys.U)) {
-            this.incShapeSize(obj, -kBoundDelta);
-        }
+        // if (engine.input.isKeyPressed(engine.input.keys.Y)) {
+        //     this.incShapeSize(obj, kBoundDelta);
+        // }
+        // if (engine.input.isKeyPressed(engine.input.keys.U)) {
+        //     this.incShapeSize(obj, -kBoundDelta);
+        // }
 
-        if (engine.input.isKeyClicked(engine.input.keys.G)) {
-            let x = 20 + Math.random() * 60;
-            let y = 75;
-            let t = Math.random() > 0.5;
-            let m = new Minion(this.kMinionSprite, x, y, t);
-            if (this.mDrawTexture) // default is false
-                m.toggleDrawRenderable();
-            if (this.mDrawBounds) // default is false
-                m.getRigidBody().toggleDrawBound();
-            if (!this.mDrawRigidShape) // default is true
-                m.toggleDrawRigidShape();
-            this.mAllObjs.addToSet(m);
+        // if (engine.input.isKeyClicked(engine.input.keys.G)) {
+        //     let x = 20 + Math.random() * 60;
+        //     let y = 75;
+        //     let t = Math.random() > 0.5;
+        //     let m = new Minion(this.kMinionSprite, x, y, t);
+        //     if (this.mDrawTexture) // default is false
+        //         m.toggleDrawRenderable();
+        //     if (this.mDrawBounds) // default is false
+        //         m.getRigidBody().toggleDrawBound();
+        //     if (!this.mDrawRigidShape) // default is true
+        //         m.toggleDrawRigidShape();
+        //     this.mAllObjs.addToSet(m);
 
-            this.mParticles.addEmitterAt(x, y, 200, _createParticle);
-        }
+        //     this.mParticles.addEmitterAt(x, y, 200, _createParticle);
+        // }
 
         // Particle System
         this.mParticles.update();
-        if (engine.input.isKeyClicked(engine.input.keys.E))
-            this.mPSDrawBounds = !this.mPSDrawBounds;
-        if (engine.input.isKeyPressed(engine.input.keys.Q)) {
-            if (this.mCamera.isMouseInViewport()) {
-                let par = _createParticle(this.mCamera.mouseWCX(), this.mCamera.mouseWCY());
-                this.mParticles.addToSet(par);
-            }
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.One))
-            this.mPSCollision = !this.mPSCollision;
-        if (this.mPSCollision) {
-            engine.particleSystem.resolveRigidShapeSetCollision(this.mAllObjs, this.mParticles);
-            engine.particleSystem.resolveRigidShapeSetCollision(this.mPlatforms, this.mParticles);
-        }
+        // if (engine.input.isKeyClicked(engine.input.keys.E))
+        //     this.mPSDrawBounds = !this.mPSDrawBounds;
+        // if (engine.input.isKeyPressed(engine.input.keys.Q)) {
+        //     if (this.mCamera.isMouseInViewport()) {
+        //         let par = _createParticle(this.mCamera.mouseWCX(), this.mCamera.mouseWCY());
+        //         this.mParticles.addToSet(par);
+        //     }
+        // }
+        // if (engine.input.isKeyClicked(engine.input.keys.One))
+        //     this.mPSCollision = !this.mPSCollision;
+        // if (this.mPSCollision) {
+        //     engine.particleSystem.resolveRigidShapeSetCollision(this.mAllObjs, this.mParticles);
+        //     engine.particleSystem.resolveRigidShapeSetCollision(this.mPlatforms, this.mParticles);
+        // }
 
         obj.keyControl();
         this.drawControlUpdate();
@@ -224,9 +226,15 @@ class MyGame extends engine.Scene {
 
         let p = obj.getXform().getPosition();
         this.mTarget.getXform().setPosition(p[0], p[1]);
+
         msg += "  V(" + engine.physics.getHasMotion() + ")" +
-            " V(" + engine.physics.getHasMotion() + ")";
+            " World(" + this.mChild.getXform().getYPos().toFixed(2) +
+            ", " + this.mChild.getXform().getXPos().toFixed(2) + ")" +
+            " Local(" + this.mChild.getLocalXform().getYPos().toFixed(2) +
+            ", " + this.mChild.getLocalXform().getXPos().toFixed(2) + ")";
         this.mMsg.setText(msg);
+
+        console.log(this.mChild.getLocalXform().mPosition[0]);
 
         this.mShapeMsg.setText(obj.getRigidBody().getCurrentState());
     }
@@ -246,11 +254,11 @@ class MyGame extends engine.Scene {
             this.mAllObjs.toggleDrawRigidShape();
             this.mPlatforms.toggleDrawRigidShape();
         }
-        if (engine.input.isKeyClicked(engine.input.keys.B)) {
-            this.mDrawBounds = !this.mDrawBounds;
-            this.mAllObjs.toggleDrawBound();
-            this.mPlatforms.toggleDrawBound();
-        }
+        // if (engine.input.isKeyClicked(engine.input.keys.B)) {
+        //     this.mDrawBounds = !this.mDrawBounds;
+        //     this.mAllObjs.toggleDrawBound();
+        //     this.mPlatforms.toggleDrawBound();
+        // }
     }
 }
 

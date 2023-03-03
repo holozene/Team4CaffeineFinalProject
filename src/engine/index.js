@@ -33,6 +33,8 @@ import Shake from "./utils/shake.js";
 import ShakeVec2 from "./utils/shake_vec2.js";
 import Material from "./material.js";
 
+import LocalTransform from "./utils/local_transform.js";
+
 // camera and related supports
 import Camera from "./cameras/camera.js";
 
@@ -117,7 +119,7 @@ export default {
     Lerp, LerpVec2, Oscillate, Shake, ShakeVec2,
 
     // Util classes
-    Camera, Scene, Transform, BoundingBox, Material,
+    Camera, Scene, Transform, BoundingBox, Material, LocalTransform,
     
     // Renderables
     Renderable, TextureRenderable, SpriteRenderable, SpriteAnimateRenderable, 

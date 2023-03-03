@@ -22,18 +22,25 @@ class GameObject {
 
     setParent(parent, recalculateTransform) {
         this.mParent = parent;
-        this.mRenderComponent.setLocalXform = new LocalTransform(parent.getXform());
-        if (recalculateTransform) {
-
-        }
+        parent.mChildren.push(this);
+        this.mRenderComponent.setLocalXform(
+            new LocalTransform(this.getXform(), parent.getXform()), recalculateTransform);
+        console.log("parent", parent.getXform());
+        console.log("local", this.getLocalXform());
     }
-    removeParent(recalculateTransform) { }
+    removeParent(recalculateTransform) {
+        arr = arr.filter(function (item) {
+            return item !== value
+        })
+        parent.mChildren = parent.mChildren.filter(function (item) { item != this });
+        console.log(this.mChildren);
+    }
     getParent() { return this.mParent }
     setChild(child, recalculateTransform) { this.mChildren.push(child) }
     removeChild(recalculateTransform) { }
     getChildren() { return this.mChildren }
 
-    getParentXform() { return this.mParent.mRenderComponent.getXform()}
+    getParentXform() { return this.mParent.mRenderComponent.getXform() }
     getLocalXform() { return this.mRenderComponent.getLocalXform(); }
 
     getXform() { return this.mRenderComponent.getXform(); }
