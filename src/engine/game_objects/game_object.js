@@ -6,6 +6,7 @@
  */
 "use strict";
 import BoundingBox from "../utils/bounding_box.js";
+import LocalTransform from "../utils/local_transform.js";
 
 class GameObject {
     constructor(renderable) {
@@ -21,13 +22,15 @@ class GameObject {
 
     setParent(parent, recalculateTransform) {
         this.mParent = parent;
-        this.mRenderComponent.setLocalXform(parent.getXform());
-        if (keepTransform) {
+        this.mRenderComponent.setLocalXform = new LocalTransform(parent.getXform());
+        if (recalculateTransform) {
 
         }
     }
+    removeParent(recalculateTransform) { }
     getParent() { return this.mParent }
-    setChild(child, keepTransform) { this.mChildren.push() }
+    setChild(child, recalculateTransform) { this.mChildren.push(child) }
+    removeChild(recalculateTransform) { }
     getChildren() { return this.mChildren }
 
     getParentXform() { return this.mParent.mRenderComponent.getXform()}

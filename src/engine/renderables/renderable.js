@@ -24,8 +24,13 @@ class Renderable {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
+    getLocalXform(transform) { this.mLocalXform = transform }
+    setLocalXform() {
+        if (this.mLocalXform) return this.mLocalXform;
+        else return this.mXform // if localXform is null, just return the globalxform
+    }
+
     getXform() { return this.mXform; }
-    getLocalXform() { if (this.mLocalXform) return this.mLocalXform; else return this.mXform }
     setColor(color) { this.mColor = color; }
     getColor() { return this.mColor; }
 
@@ -34,7 +39,7 @@ class Renderable {
         this.mShader = s;
         return out;
     }
-    
+
     // this is private/protected
     _setShader(s) {
         this.mShader = s;
