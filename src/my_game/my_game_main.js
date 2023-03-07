@@ -6,7 +6,7 @@
 import Brain from "./objects/brain.js";
 import engine from "../engine/index.js";
 import Hero from "./objects/hero.js";
-import Child from "./objects/child.js";
+
 import Patrol from "./objects/patrol.js";
 import Minion from "./objects/minion.js";
 import Interpolate from "../engine/utils/lerp.js";
@@ -19,6 +19,7 @@ class MyGame extends engine.Scene {
         super();
         this.kMinionSprite = "assets/minion_sprite.png";
         this.kMinionPortal = "assets/minion_portal.png";
+        this.stwarSprite = "assets/result.png";
         this.kBg = "assets/galaxy.png";
 
         this.tempSTR = "XX";
@@ -76,12 +77,14 @@ class MyGame extends engine.Scene {
         engine.texture.load(this.kMinionSprite);
         engine.texture.load(this.kMinionPortal);
         engine.texture.load(this.kBg);
+        engine.texture.load(  this.stwarSprite);
     }
 
     unload() {
         engine.texture.unload(this.kMinionSprite);
         engine.texture.unload(this.kMinionPortal);
         engine.texture.unload(this.kBg);
+        engine.texture.unload(this.stwarSprite);
     }
 
     init() {
@@ -102,29 +105,7 @@ class MyGame extends engine.Scene {
         );
         this.hitCam1.setBackgroundColor([0.85, 0.8, 0.8, 1]);
 
-        this.hitCam2 = new engine.Camera(
-            vec2.fromValues(200, 200),
-            50,
-            [200, 600, 200, 200],
-            2
-        );
-        this.hitCam2.setBackgroundColor([0.85, 0.8, 0.8, 1]);
-
-        this.hitCam3 = new engine.Camera(
-            vec2.fromValues(200, 200),
-            50,
-            [400, 600, 200, 200],
-            2
-        );
-        this.hitCam3.setBackgroundColor([0.85, 0.8, 0.8, 1]);
-
-        this.hitCam4 = new engine.Camera(
-            vec2.fromValues(200, 200),
-            50,
-            [600, 600, 200, 200],
-            2
-        );
-        this.hitCam3.setBackgroundColor([0.85, 0.8, 0.8, 1]);
+      
 
         // Large background image
         let bgR = new engine.SpriteRenderable(this.kBg);
@@ -135,16 +116,16 @@ class MyGame extends engine.Scene {
         engine.defaultResources.setGlobalAmbientIntensity(3);
         // Objects in the scene
 
-        this.mHero = new Hero(this.kMinionSprite);
+        this.mHero = new Hero(this.stwarSprite);
 
         this.mFocusObj = this.mHero;
 
         this.mMsg = new engine.FontRenderable("Status Message");
         this.mMsg.setColor([1, 1, 1, 1]);
         this.mMsg.getXform().setPosition(1, 14);
-        this.mMsg.setTextHeight(10);
+        this.mMsg.setTextHeight(8);
 
-        // create objects to simulate various motions
+        // create objects to simulate various motions 
         this.mBounce = new engine.Oscillate(4.5, 4, 60); // delta, freq, duration  
         this.shake = new Shake(this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos(), 5, 100);
         this.interpolateX = new Interpolate(this.mHero.getXform().getXPos(), 120, 0.05);
@@ -176,9 +157,7 @@ class MyGame extends engine.Scene {
         this.mMsg.draw(this.mCamera);   // only draw status in the main camera
 
         this._drawCamera(this.hitCam1);
-        this._drawCamera(this.hitCam2);
-        this._drawCamera(this.hitCam3);
-        this._drawCamera(this.hitCam4);
+ 
     }
 
     update() {
@@ -239,7 +218,7 @@ class MyGame extends engine.Scene {
         if (engine.input.isKeyClicked(engine.input.keys.C)) {
             this.xPoint = ((Math.random() * this.mCamera.getWCWidth()) / 2) + (this.mCamera.getWCWidth() / 2);
             this.yPoint = Math.random() * this.mCamera.getWCHeight();
-            this.patrols.push(new Patrol(this.kMinionPortal, this.kMinionSprite, this.kMinionSprite, this.xPoint, this.yPoint));
+            this.patrols.push(new Patrol(this.kMinionPortal, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
         }
 
         if (engine.input.isKeyClicked(engine.input.keys.Q) || this.Qactive) {
@@ -250,13 +229,7 @@ class MyGame extends engine.Scene {
             this.Qactive = false;
         }
 
-        if (!this.mBounce.done()) {
-            let next = this.mBounce.getNext();
-            this.mHero.getXform().incHeightBy(next);
-            this.mHero.getXform().incWidthBy(next);
-        } else {
-            this.mHero.getXform().setSize(9, 12);
-        }
+     
 
         if (engine.input.isKeyClicked(engine.input.keys.P)) {
             if (this.autoSpawnString === "True") {

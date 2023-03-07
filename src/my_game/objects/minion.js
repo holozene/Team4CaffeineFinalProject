@@ -6,22 +6,20 @@ class Minion extends engine.GameObject {
     constructor(spriteTexture, atX, atY) {
         super(null);
         this.kDelta = 0.2;
-        this.mRenderComponent = new engine.SpriteAnimateRenderable(spriteTexture);
+        this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(atX, atY);
-        this.mRenderComponent.getXform().setSize(10, 8);
-        this.mRenderComponent.setSpriteSequence(512, 0,      // first element pixel position: top-left 512 is top of image, 0 is left of image
-            204, 164,   // width x height in pixels
-            5,          // number of elements in this sequence
-            0);         // horizontal padding in between
-        this.mRenderComponent.setAnimationType(engine.eAnimationType.eSwing);
-        this.mRenderComponent.setAnimationSpeed(30);
+        this.mRenderComponent.getXform().setSize(20, 20);
+        this.mRenderComponent.setElementPixelPositions(100, 230, 0, 100);
+        this.mRenderComponent.getXform().setRotationInDegree(180);
+              // horizontal padding in between
+       
         this.die = false;
     }
 
     update() {
         // remember to update this.mRenderComponent's animation
-        this.mRenderComponent.updateAnimation();
+  
     }
 
     hit() {
