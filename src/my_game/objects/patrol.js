@@ -42,7 +42,7 @@ class Patrol extends engine.GameObject {
         this.directionMovingX = 1.0;
         this.directionMovingY = 1.0;
 
-        this.speed = .5;
+        this.speed = 2;
         this.randomSpeedX = Math.random() * this.speed;
         this.randomSpeedY = Math.random() * this.speed;
 

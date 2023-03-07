@@ -7,11 +7,11 @@ class Brain extends engine.GameObject {
         super(null);
         this.kDeltaDegree = 1;
         this.kDeltaRad = Math.PI * this.kDeltaDegree / 180;
-        this.kDeltaSpeed = 0.01;
+        this.kDeltaSpeed = 3;
         this.mRenderComponent =  new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(x, y);
-        this.mRenderComponent.getXform().setSize(50, 25);
+        this.mRenderComponent.getXform().setSize(150, 50);
         this.mRenderComponent.setElementPixelPositions(300, 550, 285 ,400);
         this.mRenderComponent.getXform().setRotationInDegree(180);
        

@@ -17,8 +17,8 @@ class DyePack extends engine.GameObject {
     this.mRenderComponent.setColor([1, 1, 1, 0.1]);
     this.mRenderComponent.getXform().setPosition(x, y);
 
-    this.mRenderComponent.getXform().setSize(2, 3.25);
-    this.mRenderComponent.setElementPixelPositions(510, 595, 23, 153);
+    this.mRenderComponent.getXform().setSize(10, 20);
+    this.mRenderComponent.setElementPixelPositions(375, 450, 0, 175) ;
     this.mRenderComponent.getXform().setRotationInDegree(90);
 
     this.timeOfLife = 2000;
@@ -26,7 +26,7 @@ class DyePack extends engine.GameObject {
     this.shouldBeDestroyedV = false;
 
 
-    this.units = 120;
+    this.units = 600;
     this.frames = 60;
 
     this.speed = this.units / this.frames;

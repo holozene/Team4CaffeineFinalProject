@@ -13,19 +13,20 @@ import Interpolate from "../engine/utils/lerp.js";
 import Shake from "../engine/utils/shake_vec2.js";
 import DyePack from "./objects/dye_pack.js";
 import TextureObject from "./objects/texture_object.js";
-
+import Gun from "./objects/guns.js";
 class MyGame extends engine.Scene {
     constructor() {
         super();
         this.kMinionSprite = "assets/minion_sprite.png";
         this.kMinionPortal = "assets/minion_portal.png";
         this.stwarSprite = "assets/result.png";
-        this.kBg = "assets/galaxy.png";
+        this.kBg = "assets/sky.jpg";
 
         this.tempSTR = "XX";
         this.dyePacks = [];
         this.patrols = [];
         this.patrolsHead = [];
+        this.guns = [];
         // The camera to view the scene
         this.mCamera = null;
         this.mHeroCam = null;
@@ -90,9 +91,9 @@ class MyGame extends engine.Scene {
     init() {
         // Step A: set up the cameras
         this.mCamera = new engine.Camera(
-            vec2.fromValues(200, 150), // position of the camera
-            400,                       // width of camera
-            [0, 0, 800, 600]           // viewport (orgX, orgY, width, height)
+            vec2.fromValues(1000, 600), // position of the camera
+            2000,                       // width of camera
+            [0, 0, 2000, 500]           // viewport (orgX, orgY, width, height)
         );
         this.mCamera.setBackgroundColor([0.9, 0.9, 0.9, 1]);
         // sets the background to gray
@@ -109,11 +110,11 @@ class MyGame extends engine.Scene {
 
         // Large background image
         let bgR = new engine.SpriteRenderable(this.kBg);
-        bgR.setElementPixelPositions(0, 1024, 0, 1024);
-        bgR.getXform().setSize(400, 400);
-        bgR.getXform().setPosition(200, 200);
+        bgR.setElementPixelPositions(0, 3000, 0, 789);
+        bgR.getXform().setSize(2000, 600);
+        bgR.getXform().setPosition(1000, 600);
         this.mBg = new engine.GameObject(bgR);
-        engine.defaultResources.setGlobalAmbientIntensity(3);
+        engine.defaultResources.setGlobalAmbientIntensity(5);
         // Objects in the scene
 
         this.mHero = new Hero(this.stwarSprite);
@@ -122,14 +123,14 @@ class MyGame extends engine.Scene {
 
         this.mMsg = new engine.FontRenderable("Status Message");
         this.mMsg.setColor([1, 1, 1, 1]);
-        this.mMsg.getXform().setPosition(1, 14);
-        this.mMsg.setTextHeight(8);
+        this.mMsg.getXform().setPosition(-500, -350);
+        this.mMsg.setTextHeight(25);
 
         // create objects to simulate various motions 
-        this.mBounce = new engine.Oscillate(4.5, 4, 60); // delta, freq, duration  
+        this.mBounce = new engine.Oscillate(40.5, 40, 60); // delta, freq, duration  
         this.shake = new Shake(this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos(), 5, 100);
-        this.interpolateX = new Interpolate(this.mHero.getXform().getXPos(), 120, 0.05);
-        this.interpolateY = new Interpolate(this.mHero.getXform().getYPos(), 120, 0.05);
+        this.interpolateX = new Interpolate(this.mHero.getXform().getXPos(), 420, 0.05);
+        this.interpolateY = new Interpolate(this.mHero.getXform().getYPos(), 420, 0.05);
     }
 
     _drawCamera(camera) {
@@ -144,6 +145,12 @@ class MyGame extends engine.Scene {
         for (let i = 0; i < this.patrols.length; i++) {
             this.patrols[i].drawInPatrol(camera);
         }
+
+        for (let i = 0; i < this.guns.length; i++) {
+            this.guns[i].drawGuns(camera);
+        }
+
+      
     }
 
     // This is the draw function, make sure to setup proper drawing environment, and more
@@ -155,8 +162,9 @@ class MyGame extends engine.Scene {
         // Step  B: Draw with all three cameras
         this._drawCamera(this.mCamera);
         this.mMsg.draw(this.mCamera);   // only draw status in the main camera
-
+    
         this._drawCamera(this.hitCam1);
+
  
     }
 
@@ -210,15 +218,38 @@ class MyGame extends engine.Scene {
                 this.time = performance.now();
             }}
 
+
+         
+
+
         // inputs
         if (engine.input.isKeyClicked(engine.input.keys.Space)) {
-            this.dyePacks.push(new DyePack(this.kMinionSprite, this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos()));
+            this.dyePacks.push(new DyePack(this.stwarSprite, this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos()));
         }
 
         if (engine.input.isKeyClicked(engine.input.keys.C)) {
-            this.xPoint = ((Math.random() * this.mCamera.getWCWidth()) / 2) + (this.mCamera.getWCWidth() / 2);
-            this.yPoint = Math.random() * this.mCamera.getWCHeight();
+            this.xPoint = (2000);
+            this.yPoint = (Math.random() * this.mCamera.getWCHeight()/2)+ (this.mCamera.getWCHeight() / 2);
             this.patrols.push(new Patrol(this.kMinionPortal, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
+        }
+
+        if (engine.input.isKeyClicked(engine.input.keys.D)) {
+            this.xPoint = (1000);
+            this.yPoint = ( 600);
+            this.guns.push(new Gun(this.stwarSprite, this.xPoint, this.yPoint));
+        }
+
+
+        for (let i = 0; i < this.guns.length; i++) {
+            this.guns[i].updateG(this.mCamera);
+         
+            if (this.guns[i].shouldBeDestroyedV)
+                this.guns.splice(i, 1);
+
+            // check if the hero touches any Patrol units 
+            //if (this.mHero.pixelTouches(this.guns[i].botObject, this.pixelTouchesArray) ) {
+
+           // }
         }
 
         if (engine.input.isKeyClicked(engine.input.keys.Q) || this.Qactive) {
