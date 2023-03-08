@@ -19,19 +19,16 @@ class GameObject {
         this.mChildren = [];
     }
 
-    setParent(parent, recalculateTransform) {
+    setParent(parent) {
         this.mParent = parent;
-        this.mRenderComponent.setLocalXform(parent.getXform());
-        if (keepTransform) {
-
-        }
+        this.mParent.mChildren.push(this);
+        this.mRenderComponent.mParentXform = parent.getXform();
     }
     getParent() { return this.mParent }
-    setChild(child, keepTransform) { this.mChildren.push() }
+    setChild(child) { child.setParent(this) }
     getChildren() { return this.mChildren }
 
-    getParentXform() { return this.mParent.mRenderComponent.getXform()}
-    getLocalXform() { return this.mRenderComponent.getLocalXform(); }
+    getParentXform() { return this.mRenderComponent.getParentXform()}
 
     getXform() { return this.mRenderComponent.getXform(); }
     getBBox() {
@@ -60,6 +57,7 @@ class GameObject {
             if ((this.mRigidBody !== null) && (this.mDrawRigidShape))
                 this.mRigidBody.draw(aCamera);
         }
+        this.mChildren.forEach(child => {child.draw(aCamera)})
     }
 
     update() {

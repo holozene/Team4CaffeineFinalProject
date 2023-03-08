@@ -5,15 +5,16 @@
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
 import Brain from "./objects/brain.js";
 import engine from "../engine/index.js";
-import Hero from "./objects/hero.js";
 
-import Patrol from "./objects/patrol.js";
-import Minion from "./objects/minion.js";
 import Interpolate from "../engine/utils/lerp.js";
 import Shake from "../engine/utils/shake_vec2.js";
 import DyePack from "./objects/dye_pack.js";
 import TextureObject from "./objects/texture_object.js";
-import Gun from "./objects/guns.js";
+import Patrol from "./objects/patrol.js";
+import Minion from "./objects/minion.js";
+import Hero from "./objects/hero.js";
+import Gun from "./objects/gun.js";
+
 class MyGame extends engine.Scene {
     constructor() {
         super();
@@ -55,6 +56,7 @@ class MyGame extends engine.Scene {
 
         // the hero and the support objects
         this.mHero = null;
+        this.mTurret = null;
         this.mFocusObj = null;
 
         this.mChoice = 'D';
@@ -78,7 +80,7 @@ class MyGame extends engine.Scene {
         engine.texture.load(this.kMinionSprite);
         engine.texture.load(this.kMinionPortal);
         engine.texture.load(this.kBg);
-        engine.texture.load(  this.stwarSprite);
+        engine.texture.load(this.stwarSprite);
     }
 
     unload() {
@@ -106,8 +108,6 @@ class MyGame extends engine.Scene {
         );
         this.hitCam1.setBackgroundColor([0.85, 0.8, 0.8, 1]);
 
-      
-
         // Large background image
         let bgR = new engine.SpriteRenderable(this.kBg);
         bgR.setElementPixelPositions(0, 3000, 0, 789);
@@ -118,12 +118,14 @@ class MyGame extends engine.Scene {
         // Objects in the scene
 
         this.mHero = new Hero(this.stwarSprite);
+        this.mTurret = new Gun(this.stwarSprite, 20, 60);
+        this.mTurret.setParent(this.mHero);
 
         this.mFocusObj = this.mHero;
 
         this.mMsg = new engine.FontRenderable("Status Message");
         this.mMsg.setColor([1, 1, 1, 1]);
-        this.mMsg.getXform().setPosition(-500, -350);
+        this.mMsg.getXform().setPosition(20, 0);
         this.mMsg.setTextHeight(25);
 
         // create objects to simulate various motions 
@@ -139,18 +141,16 @@ class MyGame extends engine.Scene {
 
         //this.mRenderComponent.draw(camera);
         this.mHero.draw(camera);
+        this.mTurret.draw(camera);
         for (let i = 0; i < this.dyePacks.length; i++) {
             this.dyePacks[i].draw(camera);
         }
         for (let i = 0; i < this.patrols.length; i++) {
             this.patrols[i].drawInPatrol(camera);
         }
-
         for (let i = 0; i < this.guns.length; i++) {
-            this.guns[i].drawGuns(camera);
+            this.guns[i].draw(camera);
         }
-
-      
     }
 
     // This is the draw function, make sure to setup proper drawing environment, and more
@@ -162,10 +162,8 @@ class MyGame extends engine.Scene {
         // Step  B: Draw with all three cameras
         this._drawCamera(this.mCamera);
         this.mMsg.draw(this.mCamera);   // only draw status in the main camera
-    
-        this._drawCamera(this.hitCam1);
 
- 
+        this._drawCamera(this.hitCam1);
     }
 
     update() {
@@ -175,11 +173,11 @@ class MyGame extends engine.Scene {
         this.mCamera.update();
         this.hitCam1.update();
         this.mHero.update();
+        this.mTurret.update(this.mCamera);
 
         // update dyepacks
         for (let i = 0; i < this.dyePacks.length; i++) {
             this.dyePacks[i].update(this.mCamera);
-
 
             for (let j = 0; j < this.patrols.length; j++) {
                 //Check if any dyePacks Are touching any Patrol units          
@@ -216,11 +214,8 @@ class MyGame extends engine.Scene {
 
                 if ((performance.now() - this.time) >= 50) this.Qactive = true;
                 this.time = performance.now();
-            }}
-
-
-         
-
+            }
+        }
 
         // inputs
         if (engine.input.isKeyClicked(engine.input.keys.Space)) {
@@ -229,27 +224,27 @@ class MyGame extends engine.Scene {
 
         if (engine.input.isKeyClicked(engine.input.keys.C)) {
             this.xPoint = (2000);
-            this.yPoint = (Math.random() * this.mCamera.getWCHeight()/2)+ (this.mCamera.getWCHeight() / 2);
+            this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
             this.patrols.push(new Patrol(this.kMinionPortal, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
         }
 
         if (engine.input.isKeyClicked(engine.input.keys.D)) {
             this.xPoint = (1000);
-            this.yPoint = ( 600);
+            this.yPoint = (600);
             this.guns.push(new Gun(this.stwarSprite, this.xPoint, this.yPoint));
         }
 
 
         for (let i = 0; i < this.guns.length; i++) {
-            this.guns[i].updateG(this.mCamera);
-         
+            this.guns[i].update(this.mCamera);
+
             if (this.guns[i].shouldBeDestroyedV)
                 this.guns.splice(i, 1);
 
             // check if the hero touches any Patrol units 
             //if (this.mHero.pixelTouches(this.guns[i].botObject, this.pixelTouchesArray) ) {
 
-           // }
+            // }
         }
 
         if (engine.input.isKeyClicked(engine.input.keys.Q) || this.Qactive) {
@@ -259,8 +254,6 @@ class MyGame extends engine.Scene {
             this.mBounce.reStart();
             this.Qactive = false;
         }
-
-     
 
         if (engine.input.isKeyClicked(engine.input.keys.P)) {
             if (this.autoSpawnString === "True") {

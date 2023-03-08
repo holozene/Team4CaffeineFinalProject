@@ -2,51 +2,43 @@
 
 import engine from "../../engine/index.js";
 
-class Guns extends engine.GameObject {
+class Gun extends engine.GameObject {
     constructor(spriteTexture, x, y) {
         super(null);
         this.kDelta = 0.2;
-        this.mRenderComponent =  new engine.SpriteRenderable(spriteTexture);
+        this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(x, y);
         this.mRenderComponent.getXform().setSize(50, 50);
-        this.firstPix=0;
-        this.secondPix=0;
-        this.thirdPix=0;
-        this.forthPix=0; 
-        this.renbdomN = Math.random();
+        this.firstPix = 0;
+        this.secondPix = 0;
+        this.thirdPix = 0;
+        this.forthPix = 0;
+        this.randomN = Math.random();
         this.GunType = 0;
-        if(this.renbdomN <= .3){
-
-        this.firstPix=250;
-        this.secondPix=350;
-        this.thirdPix=0;
-        this.forthPix=100; 
-
-      
-         
-        }else if (this.renbdomN >.3 && this.renbdomN <=.7 ){
-
-         this.firstPix=490;
-        this.secondPix=580 ;
-         this.thirdPix=0;
-         this.forthPix=100;
-        }else{
-
-        this.firstPix=590;
-        this.secondPix=735 ;
-         this.thirdPix=0;
-         this.forthPix=120;
-
+        if (this.randomN <= .3) {
+            this.firstPix = 250;
+            this.secondPix = 350;
+            this.thirdPix = 0;
+            this.forthPix = 100;
+        } else if (this.randomN > .3 && this.randomN <= .7) {
+            this.firstPix = 490;
+            this.secondPix = 580;
+            this.thirdPix = 0;
+            this.forthPix = 100;
+        } else {
+            this.firstPix = 590;
+            this.secondPix = 735;
+            this.thirdPix = 0;
+            this.forthPix = 120;
         }
-         
-        
+
         this.mRenderComponent.setElementPixelPositions(this.firstPix, this.secondPix, this.thirdPix, this.forthPix);
         this.mRenderComponent.getXform().setRotationInDegree(180);
         this.die = false;
         this.size = this.mRenderComponent.getXform().getSize();
 
-        this.shouldBeDestroyedV= false;
+        this.shouldBeDestroyedV = false;
         this.downRight;
         this.downLeft;
         this.topRight;
@@ -63,30 +55,29 @@ class Guns extends engine.GameObject {
         this.side = true;
     }
 
-    updateG(camra) {
-        // remember to update this.mRenderComponent's animation
-
-        this.setupRandomDirection(camra);
+    update(camera) {
+        this.setupRandomDirection(camera);
         this.mRenderComponent.getXform().setPosition(
             this.mRenderComponent.getXform().getXPos() + (this.randomSpeedX * this.directionMovingX),
             this.mRenderComponent.getXform().getYPos() + (this.randomSpeedY * this.directionMovingY));
 
-     
-        if (this.mRenderComponent.getXform().getXPos() > camra.getWCWidth() + 10){
+        if (this.mRenderComponent.getXform().getXPos() > camera.getWCWidth() + 10) {
 
-        };
-        if (this.mRenderComponent.die) {       
+        }
+        if (this.mRenderComponent.die) {
 
-       }
-}
-    drawGuns(camra){
-        this.mRenderComponent.draw(camra);
-
+        }
+        if (engine.input.isKeyPressed(engine.input.keys.X)) {
+            console.log(this.mRenderComponent.getXform().getXPos(),this.mRenderComponent.getXform().getYPos());
+        }
     }
 
+    draw(camera) {
+        // super();
+        this.mRenderComponent.draw(camera);
+    }
 
-    setupRandomDirection(camra) {
-
+    setupRandomDirection(camera) {
         this.object = this.mRenderComponent.getXform().getPosition();
 
         this.downRight = [this.object[0] + (this.size[0] / 2), this.object[1] - (this.size[1] / 2)];
@@ -96,9 +87,9 @@ class Guns extends engine.GameObject {
         this.topLeft = [this.object[0] - (this.size[0] / 2), this.object[1] - (this.size[1] / 2)];
 
 
-        let cWidth = camra.getWCWidth();
-        let cCenter = camra.getWCCenter();
-        let cHight = camra.getWCHeight();
+        let cWidth = camera.getWCWidth();
+        let cCenter = camera.getWCCenter();
+        let cHight = camera.getWCHeight();
 
         let cDownRight = [cCenter[0] + (cWidth / 2), cCenter[1] - (cHight / 2)];
         let cDownLeft = [cCenter[0] - (cWidth / 2), cCenter[1] - (cHight / 2)];
@@ -136,15 +127,11 @@ class Guns extends engine.GameObject {
         }
     }
 
-
-
     hit() {
         this.mRenderComponent.setColor([1, 1, 1, this.mRenderComponent.getColor()[3] + 0.2]);
-           
-        if(this.mRenderComponent.getColor()[3] >= 1){
-            this.die = true;
-        }
+
+        if (this.mRenderComponent.getColor()[3] >= 1) this.die = true;
     }
 }
 
-export default Guns;
+export default Gun;
