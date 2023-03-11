@@ -18,9 +18,10 @@ class Brain extends engine.GameObject {
         this.die = false;
     }
 
-
+    
     hit() {
         this.mRenderComponent.getXform().incXPosBy(5);
+      
     }
 
     update() {
