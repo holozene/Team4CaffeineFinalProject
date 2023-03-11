@@ -17,6 +17,9 @@ class GameObject {
         this.mDrawRigidShape = false;
         this.mParent = null;
         this.mChildren = [];
+        this.mChildren2 = [];
+        
+
     }
 
     setParent(parent) {
@@ -50,6 +53,23 @@ class GameObject {
     toggleDrawRenderable() { this.mDrawRenderable = !this.mDrawRenderable; }
     toggleDrawRigidShape() { this.mDrawRigidShape = !this.mDrawRigidShape; }
 
+   
+   //Taras Work 
+   getPerentingStatus(){
+    return this.mRenderComponent.ischild; 
+   }
+    setAsChild(){
+     this.mRenderComponent.ischild = true; 
+   }
+    setParentXform(mXform){   
+    this.mRenderComponent.mXform = mXform;
+     }
+     
+     addChild(child){
+        this.mChildren2.push(child);
+     }
+
+   
     draw(aCamera) {
         if (this.isVisible()) {
             if (this.mDrawRenderable)
@@ -57,13 +77,32 @@ class GameObject {
             if ((this.mRigidBody !== null) && (this.mDrawRigidShape))
                 this.mRigidBody.draw(aCamera);
         }
-        this.mChildren.forEach(child => {child.draw(aCamera)})
+        this.mChildren.forEach(child => {child.draw(aCamera)});
+  
     }
 
     update() {
         // simple default behavior
         if (this.mRigidBody !== null)
             this.mRigidBody.update();
+
+                //taras work
+       // for(let i = 0 ; i< this.mChildren.length; i++){      
+       
+        //}
+    }
+    update2(aCamera) {
+        // simple default behavior
+        if (this.mRigidBody !== null)
+            this.mRigidBody.update();
+
+                //taras work
+        for(let i = 0 ; i< this.mChildren2.length; i++){      
+    
+            this.mChildren2[i].update(aCamera);
+            this.mChildren2[i].mRenderComponent.draw(aCamera);   
+            //draw(aCamera)
+        }
     }
 
     // Support for per-pixel collision
