@@ -21,11 +21,15 @@ class GameObject {
         
 
     }
-
+    incrementChild(){
+       
+    }
     setParent(parent) {
         this.mParent = parent;
         this.mParent.mChildren.push(this);
         this.mRenderComponent.mParentXform = parent.getXform();
+        
+        
     }
     getParent() { return this.mParent }
     setChild(child) { child.setParent(this) }

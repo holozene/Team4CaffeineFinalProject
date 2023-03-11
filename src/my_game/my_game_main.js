@@ -118,9 +118,10 @@ class MyGame extends engine.Scene {
         // Objects in the scene
 
         this.mHero = new Hero(this.stwarSprite);
-        this.mTurret = new Gun(this.stwarSprite, 20, 60);
+        this.mTurret = new Gun(this.stwarSprite, 10, 30);
         this.mTurret.setParent(this.mHero);
-
+      
+       
         this.mFocusObj = this.mHero;
 
         this.mMsg = new engine.FontRenderable("Status Message");

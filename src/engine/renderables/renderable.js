@@ -16,8 +16,9 @@ class Renderable {
         this.mXform = new Transform(); // transform that moves this object around
         this.mColor = [1, 1, 1, 1];    // color of pixel
         this.mParentXform = new Transform(); // the default transform will not affect the object, but if it is overridden, this object will be offset by the transform
-        this.mChildren = 0;
+        this.mChildren = 1;
         this.isChild = false;
+        this.test = 0;
     }
 
     draw(camera) {
@@ -30,39 +31,45 @@ class Renderable {
     }
 
 
-    // increaseChildren() {
-    //     if (this.mChildren == 0) {    
-    //     }
-    //     this.mChildren++;
-    // }
-    // decreaseChildren() {
-    //     this.mChildren--;
-    // }
+     increaseChildren() {
+         if (this.mChildren == 0) {    
+         }
+         
+         this.mChildren++;
+     }
+     decreaseChildren() {
+         this.mChildren--;
+     }
 
    
     getXform() {
-        // if(!this.mParentXform) return this.mXform;
-        // let xform = new Transform();
-        // xform.setTRSMatrix(mat4)
-        // if (this.mChildren > 0) {
-        //     return this.mParentXform
-        // }
+         if(!this.mParentXform) return this.mXform;
+         let xform = new Transform();
+         
+         //xform.setTRSMatrix(mat4);
+         if (this.mChildren > 0) {
+             return this.mParentXform
+         }
         return this.mXform;
     }
-    getParentXform() { return this.mParentXform }
+    getParentXform() { 
+        this.mChildren++;
+        return this.mParentXform;
+    
+    }
     setColor(color) { this.mColor = color; }
     getColor() { return this.mColor; }
     
    
-    // getPerentingStatus(){
-    //     return this.ischild; 
-    // }
+     getPerentingStatus(){
+         return this.ischild; 
+     }
     setAsChild(){
         this.ischild = true; 
      }
-    // setParentXform(mXform){   
-    //     this.mXform = mXform;
-    // }
+     setParentXform(mXform){   
+         this.mXform = mXform;
+    }
 
 
     swapShader(s) {
