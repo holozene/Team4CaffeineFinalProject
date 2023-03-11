@@ -14,23 +14,40 @@ class Renderable {
     constructor() {
         this.mShader = shaderResources.getConstColorShader();  // get the constant color shader
         this.mXform = new Transform(); // transform that moves this object around
-        this.mLocalXform = null; // transform that moves this object around
         this.mColor = [1, 1, 1, 1];    // color of pixel
+        this.mParentXform = new Transform(); // the default transform will not affect the object, but if it is overridden, this object will be offset by the transform
+        this.mChildren = 0;
     }
 
     draw(camera) {
         let gl = glSys.get();
-        this.mShader.activate(this.mColor, this.getLocalXform().getTRSMatrix(), camera.getCameraMatrix());  // always activate the shader first!
+        // todo: for efficency we could by default set mParentXform to null and only perform this math if necessary
+        let matrix = mat4.create()
+        mat4.multiply(matrix, this.mParentXform.getTRSMatrix(), this.mXform.getTRSMatrix())
+        this.mShader.activate(this.mColor, matrix, camera.getCameraMatrix());  // always activate the shader first!
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    getLocalXform(transform) { this.mLocalXform = transform }
-    setLocalXform() {
-        if (this.mLocalXform) return this.mLocalXform;
-        else return this.mXform // if localXform is null, just return the globalxform
-    }
+    // increaseChildren() {
+    //     if (this.mChildren == 0) {
+            
+    //     }
+    //     this.mChildren++;
+    // }
+    // decreaseChildren() {
+    //     this.mChildren--;
+    // }
 
-    getXform() { return this.mXform; }
+    getXform() {
+        // if(!this.mParentXform) return this.mXform;
+        // let xform = new Transform();
+        // xform.setTRSMatrix(mat4)
+        // if (this.mChildren > 0) {
+        //     return this.mParentXform
+        // }
+        return this.mXform;
+    }
+    getParentXform() { return this.mParentXform }
     setColor(color) { this.mColor = color; }
     getColor() { return this.mColor; }
 

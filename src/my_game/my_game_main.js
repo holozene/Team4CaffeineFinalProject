@@ -3,112 +3,154 @@
  *       This is the logic of our game. 
  */
 "use strict";  // Operate in Strict mode such that variables must be declared before used!
-
+import Brain from "./objects/brain.js";
 import engine from "../engine/index.js";
-import Hero from "./objects/hero.js";
-import Child from "./objects/child.js";
+
+import Interpolate from "../engine/utils/lerp.js";
+import Shake from "../engine/utils/shake_vec2.js";
+import DyePack from "./objects/dye_pack.js";
+import TextureObject from "./objects/texture_object.js";
+import Patrol from "./objects/patrol.js";
 import Minion from "./objects/minion.js";
+import Hero from "./objects/hero.js";
+import Gun from "./objects/gun.js";
 
 class MyGame extends engine.Scene {
     constructor() {
         super();
         this.kMinionSprite = "assets/minion_sprite.png";
-        this.kPlatformTexture = "assets/platform.png";
-        this.kWallTexture = "assets/wall.png";
-        this.kTargetTexture = "assets/target.png";
+        this.kMinionPortal = "assets/minion_portal.png";
+        this.stwarSprite = "assets/result.png";
+        this.kBg = "assets/sky.jpg";
 
+        this.tempSTR = "XX";
+        this.dyePacks = [];
+        this.patrols = [];
+        this.patrolsHead = [];
+        this.guns = [];
         // The camera to view the scene
         this.mCamera = null;
+        this.mHeroCam = null;
+        this.pixelTouchesArray = [];
+        this.cameraPos;
+        this.cameraWidth;
+        this.shake = null;
 
+        this.time;
+        this.Qactive = false;
+
+        this.xPoint;
+        this.yPoint;
+
+        this.randomPosX;
+        this.randomPosY;
+
+        this.hitCam1 = null;
+        this.hitCam2 = null;
+        this.hitCam3 = null;
+        this.hitCam4 = null;
+
+        this.mBg = null;
         this.mMsg = null;
-        this.mShapeMsg = null;
 
-        this.mAllObjs = null;
-        this.mPlatforms = null;
-        this.mBounds = null;
-        this.mCollisionInfos = [];
+
+        // the hero and the support objects
         this.mHero = null;
+        this.mTurret = null;
+        this.mFocusObj = null;
 
-        this.mCurrentObj = 0;
-        this.mTarget = null;
+        this.mChoice = 'D';
+        this.dyePackx;
 
-        // Draw controls
-        this.mDrawCollisionInfo = false;
-        this.mDrawTexture = true;
-        this.mDrawBounds = false;
-        this.mDrawRigidShape = true;
+        this.interpolateX;
+        this.interpolateY;
 
-        // Particle Support
-        this.mParticles = null;
-        this.mPSDrawBounds = false;
-        this.mPSCollision = true;
+
+        this.randomSpawnPosX;
+        this.randomSpawnPosY;
+
+        this.numberOfdyePacks = 0;
+        this.numberOfPatrolUnits = 0;
+
+        this.autoSpawnString = "False";
+        this.mBounce = new engine.Oscillate(1.5, 6, 120);
     }
-
-
 
     load() {
         engine.texture.load(this.kMinionSprite);
-        engine.texture.load(this.kPlatformTexture);
-        engine.texture.load(this.kWallTexture);
-        engine.texture.load(this.kTargetTexture);
+        engine.texture.load(this.kMinionPortal);
+        engine.texture.load(this.kBg);
+        engine.texture.load(this.stwarSprite);
     }
 
     unload() {
         engine.texture.unload(this.kMinionSprite);
-        engine.texture.unload(this.kPlatformTexture);
-        engine.texture.unload(this.kWallTexture);
-        engine.texture.unload(this.kTargetTexture);
+        engine.texture.unload(this.kMinionPortal);
+        engine.texture.unload(this.kBg);
+        engine.texture.unload(this.stwarSprite);
     }
 
     init() {
         // Step A: set up the cameras
         this.mCamera = new engine.Camera(
-            vec2.fromValues(50, 40), // position of the camera
-            100,                     // width of camera
-            [0, 0, 800, 600]         // viewport (orgX, orgY, width, height)
+            vec2.fromValues(1000, 600), // position of the camera
+            2000,                       // width of camera
+            [0, 0, 2000, 500]           // viewport (orgX, orgY, width, height)
         );
-        this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
+        this.mCamera.setBackgroundColor([0.9, 0.9, 0.9, 1]);
         // sets the background to gray
-        engine.defaultResources.setGlobalAmbientIntensity(3);
-        engine.physics.setSystemAcceleration(0, 0);
 
-        this.mAllObjs = new engine.GameObjectSet();
-        this.mPlatforms = new engine.GameObjectSet();
+        this.hitCam1 = new engine.Camera(
+            vec2.fromValues(200, 200),    // will be updated at each cycle to point to hero
+            50,
+            [0, 600, 200, 200],
+            2                           // viewport bounds
+        );
+        this.hitCam1.setBackgroundColor([0.85, 0.8, 0.8, 1]);
 
-        this.createBounds();  // added to mPlatforms
+        // Large background image
+        let bgR = new engine.SpriteRenderable(this.kBg);
+        bgR.setElementPixelPositions(0, 3000, 0, 789);
+        bgR.getXform().setSize(2000, 600);
+        bgR.getXform().setPosition(1000, 600);
+        this.mBg = new engine.GameObject(bgR);
+        engine.defaultResources.setGlobalAmbientIntensity(5);
+        // Objects in the scene
 
-        this.mHero = new Hero(this.kMinionSprite);
-        this.mAllObjs.addToSet(this.mHero);
-        this.mCurrentObj = 0;
+        this.mHero = new Hero(this.stwarSprite);
+        this.mTurret = new Gun(this.stwarSprite, 20, 60);
+        this.mTurret.setParent(this.mHero);
 
-        this.mChild = new Child(this.kMinionSprite);
-        this.mAllObjs.addToSet(this.mChild);
-
-        // this.mHero.setChild(this.mChild, false);
-
-
-        // particle systems
-        this.mParticles = new engine.ParticleSet();
-
-        let y = 70;
-        let x = 10;
-        for (let i = 1; i <= 5; i++) {
-            let m = new Minion(this.kMinionSprite, x, y, ((i % 2) !== 0));
-            this.mParticles.addEmitterAt(x, y, 200, _createParticle);
-            x += 20;
-            this.mAllObjs.addToSet(m);
-        }
+        this.mFocusObj = this.mHero;
 
         this.mMsg = new engine.FontRenderable("Status Message");
-        this.mMsg.setColor([0, 0, 0, 1]);
-        this.mMsg.getXform().setPosition(5, 7);
-        this.mMsg.setTextHeight(3);
+        this.mMsg.setColor([1, 1, 1, 1]);
+        this.mMsg.getXform().setPosition(20, 0);
+        this.mMsg.setTextHeight(25);
 
-        this.mShapeMsg = new engine.FontRenderable("Shape");
-        this.mShapeMsg.setColor([0, 0, 0, 1]);
-        this.mShapeMsg.getXform().setPosition(5, 73);
-        this.mShapeMsg.setTextHeight(2.5);
+        // create objects to simulate various motions 
+        this.mBounce = new engine.Oscillate(40.5, 40, 60); // delta, freq, duration  
+        this.shake = new Shake(this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos(), 5, 100);
+        this.interpolateX = new Interpolate(this.mHero.getXform().getXPos(), 420, 0.05);
+        this.interpolateY = new Interpolate(this.mHero.getXform().getYPos(), 420, 0.05);
+    }
 
+    _drawCamera(camera) {
+        camera.setViewAndCameraMatrix();
+        this.mBg.draw(camera);
+
+        //this.mRenderComponent.draw(camera);
+        this.mHero.draw(camera);
+        this.mTurret.draw(camera);
+        for (let i = 0; i < this.dyePacks.length; i++) {
+            this.dyePacks[i].draw(camera);
+        }
+        for (let i = 0; i < this.patrols.length; i++) {
+            this.patrols[i].drawInPatrol(camera);
+        }
+        for (let i = 0; i < this.guns.length; i++) {
+            this.guns[i].draw(camera);
+        }
     }
 
     // This is the draw function, make sure to setup proper drawing environment, and more
@@ -117,180 +159,147 @@ class MyGame extends engine.Scene {
         // Step A: clear the canvas
         engine.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
 
-        this.mCamera.setViewAndCameraMatrix();
+        // Step  B: Draw with all three cameras
+        this._drawCamera(this.mCamera);
+        this.mMsg.draw(this.mCamera);   // only draw status in the main camera
 
-        this.mPlatforms.draw(this.mCamera);
-        this.mAllObjs.draw(this.mCamera);
-
-        this.mParticles.draw(this.mCamera);
-        if (this.mPSDrawBounds)
-            this.mParticles.drawMarkers(this.mCamera);
-
-        // for now draw these ...
-        if (this.mCollisionInfos !== null) {
-            for (let i = 0; i < this.mCollisionInfos.length; i++)
-                this.mCollisionInfos[i].draw(this.mCamera);
-            this.mCollisionInfos = [];
-        }
-
-        this.mTarget.draw(this.mCamera);
-        this.mMsg.draw(this.mCamera);
-        this.mShapeMsg.draw(this.mCamera);
+        this._drawCamera(this.hitCam1);
     }
 
-    incShapeSize(obj, delta) {
-        let s = obj.getRigidBody();
-        let r = s.incShapeSizeBy(delta);
-    }
-
-    // The Update function, updates the application state. Make sure to _NOT_ draw
-    // anything from this function!
     update() {
-        let msg = "";
-        let kBoundDelta = 0.1;
+        let zoomDelta = 0.05;
 
-        this.mAllObjs.update(this.mCamera);
-        this.mPlatforms.update(this.mCamera);
+        // update objects
+        this.mCamera.update();
+        this.hitCam1.update();
+        this.mHero.update();
+        this.mTurret.update(this.mCamera);
 
-        if (engine.input.isKeyClicked(engine.input.keys.V)) {
-            engine.physics.toggleHasMotion();
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.H)) {
-            this.randomizeVelocity();
-        }
+        // update dyepacks
+        for (let i = 0; i < this.dyePacks.length; i++) {
+            this.dyePacks[i].update(this.mCamera);
 
-        if (engine.input.isKeyClicked(engine.input.keys.Left)) {
-            this.mCurrentObj -= 1;
-            if (this.mCurrentObj < 0)
-                this.mCurrentObj = this.mAllObjs.size() - 1;
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.Right)) {
-            this.mCurrentObj += 1;
-            if (this.mCurrentObj >= this.mAllObjs.size())
-                this.mCurrentObj = 0;
-        }
+            for (let j = 0; j < this.patrols.length; j++) {
+                //Check if any dyePacks Are touching any Patrol units          
+                if (this.dyePacks[i].pixelTouches(this.patrols[j].botObject, this.pixelTouchesArray)) {
+                    this.dyePacks[i].collision();
+                    this.patrols[j].botObject.hit();
+                }
+                if (this.dyePacks[i].pixelTouches(this.patrols[j].topObject, this.pixelTouchesArray)) {
+                    this.dyePacks[i].collision();
+                    this.patrols[j].topObject.hit();
+                }
+                if (this.dyePacks[i].pixelTouches(this.patrols[j].head, this.pixelTouchesArray)) {
+                    this.dyePacks[i].collision();
+                    this.patrols[j].head.hit();
+                }
+            }
 
-        let obj = this.mAllObjs.getObjectAt(this.mCurrentObj);
-        if (engine.input.isKeyPressed(engine.input.keys.Y)) {
-            this.incShapeSize(obj, kBoundDelta);
-        }
-        if (engine.input.isKeyPressed(engine.input.keys.U)) {
-            this.incShapeSize(obj, -kBoundDelta);
-        }
-
-        if (engine.input.isKeyClicked(engine.input.keys.G)) {
-            let x = 20 + Math.random() * 60;
-            let y = 75;
-            let t = Math.random() > 0.5;
-            let m = new Minion(this.kMinionSprite, x, y, t);
-            if (this.mDrawTexture) // default is false
-                m.toggleDrawRenderable();
-            if (this.mDrawBounds) // default is false
-                m.getRigidBody().toggleDrawBound();
-            if (!this.mDrawRigidShape) // default is true
-                m.toggleDrawRigidShape();
-            this.mAllObjs.addToSet(m);
-
-            this.mParticles.addEmitterAt(x, y, 200, _createParticle);
+            if (this.dyePacks[i].shouldBeDestroyedV)
+                this.dyePacks.splice(i, 1);
         }
 
-        // Particle System
-        this.mParticles.update();
-        if (engine.input.isKeyClicked(engine.input.keys.E))
-            this.mPSDrawBounds = !this.mPSDrawBounds;
-        if (engine.input.isKeyPressed(engine.input.keys.Q)) {
-            if (this.mCamera.isMouseInViewport()) {
-                let par = _createParticle(this.mCamera.mouseWCX(), this.mCamera.mouseWCY());
-                this.mParticles.addToSet(par);
+        // update patrols
+        for (let i = 0; i < this.patrols.length; i++) {
+            this.patrols[i].update(this.mCamera);
+            // this.patrols[i].topObject.update();
+
+            if (this.patrols[i].shouldBeDestroyedV)
+                this.patrols.splice(i, 1);
+
+            // check if the hero touches any Patrol units 
+            if (this.mHero.pixelTouches(this.patrols[i].botObject, this.pixelTouchesArray) ||
+                this.mHero.pixelTouches(this.patrols[i].topObject, this.pixelTouchesArray) ||
+                this.mHero.pixelTouches(this.patrols[i].head, this.pixelTouchesArray)) {
+
+                if ((performance.now() - this.time) >= 50) this.Qactive = true;
+                this.time = performance.now();
             }
         }
-        if (engine.input.isKeyClicked(engine.input.keys.One))
-            this.mPSCollision = !this.mPSCollision;
-        if (this.mPSCollision) {
-            engine.particleSystem.resolveRigidShapeSetCollision(this.mAllObjs, this.mParticles);
-            engine.particleSystem.resolveRigidShapeSetCollision(this.mPlatforms, this.mParticles);
+
+        // inputs
+        if (engine.input.isKeyClicked(engine.input.keys.Space)) {
+            this.dyePacks.push(new DyePack(this.stwarSprite, this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos()));
         }
 
-        obj.keyControl();
-        this.drawControlUpdate();
+        if (engine.input.isKeyClicked(engine.input.keys.C)) {
+            this.xPoint = (2000);
+            this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
+            this.patrols.push(new Patrol(this.kMinionPortal, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
+        }
 
-        if (this.mDrawCollisionInfo)
-            this.mCollisionInfos = [];
-        else
-            this.mCollisionInfos = null;
-        engine.physics.processObjToSet(this.mHero, this.mPlatforms, this.mCollisionInfos);
-        engine.physics.processSetToSet(this.mAllObjs, this.mPlatforms, this.mCollisionInfos);
-        engine.physics.processSet(this.mAllObjs, this.mCollisionInfos);
+        if (engine.input.isKeyClicked(engine.input.keys.D)) {
+            this.xPoint = (1000);
+            this.yPoint = (600);
+            this.guns.push(new Gun(this.stwarSprite, this.xPoint, this.yPoint));
+        }
 
-        let p = obj.getXform().getPosition();
-        this.mTarget.getXform().setPosition(p[0], p[1]);
-        msg += "  V(" + engine.physics.getHasMotion() + ")" +
-            " V(" + engine.physics.getHasMotion() + ")";
+
+        for (let i = 0; i < this.guns.length; i++) {
+            this.guns[i].update(this.mCamera);
+
+            if (this.guns[i].shouldBeDestroyedV)
+                this.guns.splice(i, 1);
+
+            // check if the hero touches any Patrol units 
+            //if (this.mHero.pixelTouches(this.guns[i].botObject, this.pixelTouchesArray) ) {
+
+            // }
+        }
+
+        if (engine.input.isKeyClicked(engine.input.keys.Q) || this.Qactive) {
+            if (this.shake !== null) {
+                this.shake.reStart();
+            }
+            this.mBounce.reStart();
+            this.Qactive = false;
+        }
+
+        if (engine.input.isKeyClicked(engine.input.keys.P)) {
+            if (this.autoSpawnString === "True") {
+                this.autoSpawnString = "False"
+            } else {
+                this.autoSpawnString = "True";
+            }
+        }
+        if (this.autoSpawnString === "True") {
+            if (Math.random() < .005) {
+                this.xPoint = ((Math.random() * this.mCamera.getWCWidth()) / 2) + (this.mCamera.getWCWidth() / 2);
+                this.yPoint = Math.random() * this.mCamera.getWCHeight();
+                this.patrols.push(new Patrol(this.kMinionPortal, this.kMinionSprite, this.kMinionSprite, this.xPoint, this.yPoint));
+            }
+        }
+
+        if (engine.input.isKeyClicked(engine.input.keys.H)) {
+            this.mFocusObj = this.mHero;
+            this.mChoice = 'H';
+        }
+
+        if (!this.mBounce.done()) {
+            let d = this.mBounce.getNext();
+            this.mHero.getXform().incXPosBy(d);
+        }
+
+        // set the hero and brain cams    
+        this.hitCam1.panTo(this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos());
+
+        let msg = "";
+        msg += " X=" + engine.input.getMousePosX() + " Y=" + engine.input.getMousePosY() + "      Auto Spawn: " + this.autoSpawnString +
+            "      Patrols: " + this.patrols.length + "  DyePacks: " + this.dyePacks.length;
         this.mMsg.setText(msg);
 
-        this.mShapeMsg.setText(obj.getRigidBody().getCurrentState());
-    }
+        if (this.mCamera.isMouseInViewport()) {
+            let x = this.mCamera.mouseWCX();
+            let y = this.mCamera.mouseWCY();
 
-    drawControlUpdate() {
-        let i;
-        if (engine.input.isKeyClicked(engine.input.keys.C)) {
-            this.mDrawCollisionInfo = !this.mDrawCollisionInfo;
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.T)) {
-            this.mDrawTexture = !this.mDrawTexture;
-            this.mAllObjs.toggleDrawRenderable();
-            this.mPlatforms.toggleDrawRenderable();
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.R)) {
-            this.mDrawRigidShape = !this.mDrawRigidShape;
-            this.mAllObjs.toggleDrawRigidShape();
-            this.mPlatforms.toggleDrawRigidShape();
-        }
-        if (engine.input.isKeyClicked(engine.input.keys.B)) {
-            this.mDrawBounds = !this.mDrawBounds;
-            this.mAllObjs.toggleDrawBound();
-            this.mPlatforms.toggleDrawBound();
+            this.interpolateX.setFinal(x);
+            this.interpolateX.update();
+            this.mHero.getXform().setXPos(this.interpolateX.get());
+            this.interpolateY.setFinal(y);
+            this.interpolateY.update();
+            this.mHero.getXform().setYPos(this.interpolateY.get());
         }
     }
 }
 
-let kSpeed = 40;
-MyGame.prototype.randomizeVelocity = function () {
-    let i = 0;
-    for (i = 0; i < this.mAllObjs.size(); i++) {
-        let obj = this.mAllObjs.getObjectAt(i);
-        let rigidShape = obj.getRigidBody();
-        let x = (Math.random() - 0.5) * kSpeed;
-        let y = Math.random() * kSpeed * 0.5;
-        rigidShape.setVelocity(x, y);
-        let c = rigidShape.getCenter();
-        this.mParticles.addEmitterAt(c[0], c[1], 20, _createParticle);
-    }
-}
-
-function _createParticle(atX, atY) {
-    let life = 30 + Math.random() * 200;
-    let p = new engine.Particle(engine.defaultResources.getDefaultPSTexture(), atX, atY, life);
-    p.setColor([1, 0, 0, 1]);
-
-    // size of the particle
-    let r = 5.5 + Math.random() * 0.5;
-    p.setSize(r, r);
-
-    // final color
-    let fr = 3.5 + Math.random();
-    let fg = 0.4 + 0.1 * Math.random();
-    let fb = 0.3 + 0.1 * Math.random();
-    p.setFinalColor([fr, fg, fb, 0.6]);
-
-    // velocity on the particle
-    let fx = 10 - 20 * Math.random();
-    let fy = 10 * Math.random();
-    p.setVelocity(fx, fy);
-
-    // size delta
-    p.setSizeDelta(0.98);
-
-    return p;
-}
 export default MyGame;

@@ -7,7 +7,7 @@
 "use strict";
 
 class Transform {
-    
+
     constructor() {
         this.mPosition = vec2.fromValues(0, 0);  // this is the translation
         this.mScale = vec2.fromValues(1, 1);     // this is the width (x) and height (y)
@@ -34,7 +34,7 @@ class Transform {
     setZPos(d) { this.mZ = d; }
     getZPos() { return this.mZ; }
     incZPosBy(delta) { this.mZ += delta; }
-    
+
     setSize(width, height) {
         this.setWidth(width);
         this.setHeight(height);
@@ -65,9 +65,9 @@ class Transform {
     incRotationByRad(deltaRad) {
         this.setRotationInRad(this.mRotationInRad + deltaRad);
     }
-    getRotationInRad() {  return this.mRotationInRad; }
+    getRotationInRad() { return this.mRotationInRad; }
     getRotationInDegree() { return this.mRotationInRad * 180.0 / Math.PI; }
-    
+
     // returns the matrix the concatenates the transformations defined
     getTRSMatrix() {
         // Creates a blank identity matrix
@@ -84,6 +84,21 @@ class Transform {
         mat4.scale(matrix, matrix, vec3.fromValues(this.getWidth(), this.getHeight(), 1.0));
 
         return matrix;
+    }
+
+    // sets the transform values based on a matrix
+    setTRSMatrix(matrix) {
+        let translate = vec3.fromValues(0, 0, 0);
+        mat4.getTranslation(translate, matrix);
+        this.set3DPosition(translate[0], translate[1], translate[2]);
+
+        let scale = vec3.fromValues(0, 0, 0);
+        mat4.getScaling(scale, matrix);
+        this.setSize(scale[0], scale[1]);
+
+        let rotate = quat.create();
+        mat4.getRotation(rotate, matrix);
+        this.setRotationInRad(quat.getAxisAngle(vec3.fromValues(0, 0, 1), rotate));
     }
 }
 
