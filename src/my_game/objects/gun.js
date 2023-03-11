@@ -32,7 +32,7 @@ class Gun extends engine.GameObject {
             this.thirdPix = 0;
             this.forthPix = 120;
         }
-
+ 
         this.mRenderComponent.setElementPixelPositions(this.firstPix, this.secondPix, this.thirdPix, this.forthPix);
         this.mRenderComponent.getXform().setRotationInDegree(180);
         this.die = false;
@@ -53,6 +53,10 @@ class Gun extends engine.GameObject {
 
         this.uP = true;
         this.side = true;
+
+        this.isChild = false;//this.mRenderComponent.getPerentingStatus();
+
+        
     }
 
     update(camera) {
@@ -71,13 +75,18 @@ class Gun extends engine.GameObject {
             console.log(this.mRenderComponent.getXform().getXPos(),this.mRenderComponent.getXform().getYPos());
         }
     }
+   
 
-    draw(camera) {
+    //draw(camera) {
         // super();
-        this.mRenderComponent.draw(camera);
-    }
+        //this.mRenderComponent.draw(camera);
+   // }
 
     setupRandomDirection(camera) {
+       
+        if( !this.isChild){ // if not child
+       
+       
         this.object = this.mRenderComponent.getXform().getPosition();
 
         this.downRight = [this.object[0] + (this.size[0] / 2), this.object[1] - (this.size[1] / 2)];
@@ -125,6 +134,7 @@ class Gun extends engine.GameObject {
             this.directionMovingY = this.directionMovingY * -1;
             this.up = true;
         }
+       }
     }
 
     hit() {

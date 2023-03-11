@@ -17,6 +17,7 @@ class Renderable {
         this.mColor = [1, 1, 1, 1];    // color of pixel
         this.mParentXform = new Transform(); // the default transform will not affect the object, but if it is overridden, this object will be offset by the transform
         this.mChildren = 0;
+        this.isChild = false;
     }
 
     draw(camera) {
@@ -28,9 +29,9 @@ class Renderable {
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
+
     // increaseChildren() {
-    //     if (this.mChildren == 0) {
-            
+    //     if (this.mChildren == 0) {    
     //     }
     //     this.mChildren++;
     // }
@@ -38,6 +39,7 @@ class Renderable {
     //     this.mChildren--;
     // }
 
+   
     getXform() {
         // if(!this.mParentXform) return this.mXform;
         // let xform = new Transform();
@@ -50,6 +52,18 @@ class Renderable {
     getParentXform() { return this.mParentXform }
     setColor(color) { this.mColor = color; }
     getColor() { return this.mColor; }
+    
+   
+    // getPerentingStatus(){
+    //     return this.ischild; 
+    // }
+    setAsChild(){
+        this.ischild = true; 
+     }
+    // setParentXform(mXform){   
+    //     this.mXform = mXform;
+    // }
+
 
     swapShader(s) {
         let out = this.mShader;

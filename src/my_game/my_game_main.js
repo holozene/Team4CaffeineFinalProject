@@ -162,8 +162,6 @@ class MyGame extends engine.Scene {
         // Step  B: Draw with all three cameras
         this._drawCamera(this.mCamera);
         this.mMsg.draw(this.mCamera);   // only draw status in the main camera
-
-        this._drawCamera(this.hitCam1);
     }
 
     update() {
@@ -172,9 +170,9 @@ class MyGame extends engine.Scene {
         // update objects
         this.mCamera.update();
         this.hitCam1.update();
-        this.mHero.update();
+        this.mHero.update(this.mCamera);
         this.mTurret.update(this.mCamera);
-
+        this.mHero.update2(this.mCamera);
         // update dyepacks
         for (let i = 0; i < this.dyePacks.length; i++) {
             this.dyePacks[i].update(this.mCamera);
@@ -198,6 +196,11 @@ class MyGame extends engine.Scene {
             if (this.dyePacks[i].shouldBeDestroyedV)
                 this.dyePacks.splice(i, 1);
         }
+
+
+
+
+
 
         // update patrols
         for (let i = 0; i < this.patrols.length; i++) {
@@ -241,10 +244,12 @@ class MyGame extends engine.Scene {
             if (this.guns[i].shouldBeDestroyedV)
                 this.guns.splice(i, 1);
 
-            // check if the hero touches any Patrol units 
-            //if (this.mHero.pixelTouches(this.guns[i].botObject, this.pixelTouchesArray) ) {
-
-            // }
+       ///.________________________________setAsChild()
+            if (this.mHero.pixelTouches(this.guns[i], this.pixelTouchesArray)) {
+                this.guns[i].isChild = true; 
+                this.mHero.addChild(this.guns[i]);
+                this.guns.splice(i, 1);            
+             }
         }
 
         if (engine.input.isKeyClicked(engine.input.keys.Q) || this.Qactive) {
