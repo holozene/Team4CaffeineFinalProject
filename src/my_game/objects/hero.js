@@ -10,26 +10,25 @@ class Hero extends engine.GameObject {
         this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(200, 600);
-        this.mRenderComponent.getXform().setSize(200, 200);  
+        this.mRenderComponent.getXform().setSize(250, 250);  
         this.mRenderComponent.setElementPixelPositions(0, 100, 0, 100);
         this.oscillate = false;
+
+        this.canon3 = false; 
+        this.canonFire = false;
+        this.canonSpin = false;
+        this.canonType =0;
     }
 
-    update() {
-        // control by WASD
-        let xform = this.getXform();
-        if (engine.input.isKeyPressed(engine.input.keys.W)) {
-            xform.incYPosBy(this.kDelta);
-        }
-        if (engine.input.isKeyPressed(engine.input.keys.S)) {
-            xform.incYPosBy(-this.kDelta);
-        }
-        if (engine.input.isKeyPressed(engine.input.keys.A)) {
-            xform.incXPosBy(-this.kDelta);
-        }
-        if (engine.input.isKeyPressed(engine.input.keys.D)) {
-            xform.incXPosBy(this.kDelta);
-        }
+
+
+
+
+
+    update(camra) {
+        //if () {
+          //  this.dyePacks.push(new DyePack(this.stwarSprite, this.mHero.getXform().getXPos(), this.mHero.getXform().getYPos()));
+       // }
     }
 }
 

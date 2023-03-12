@@ -9,28 +9,43 @@ class Gun extends engine.GameObject {
         this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(x, y);
-        this.mRenderComponent.getXform().setSize(50, 50);
+        this.mRenderComponent.getXform().setSize(30, 30);
+        
+        //calculate the location on the sprite sheet of  renderable objects
         this.firstPix = 0;
         this.secondPix = 0;
         this.thirdPix = 0;
         this.forthPix = 0;
         this.randomN = Math.random();
         this.GunType = 0;
+
+        //keep a record of what Canon is on the ship
+        this.canon3 = false; 
+        this.canonFire = false;
+        this.canonSpin = false;
+        this.canonType =0;
+        
         if (this.randomN <= .3) {
             this.firstPix = 250;
             this.secondPix = 350;
             this.thirdPix = 0;
             this.forthPix = 100;
+            this.canon3 = true; 
+            this.canonType =1;
         } else if (this.randomN > .3 && this.randomN <= .7) {
             this.firstPix = 490;
             this.secondPix = 580;
             this.thirdPix = 0;
             this.forthPix = 100;
+            this.canonFire = true;
+            this.canonType =2;
         } else {
             this.firstPix = 590;
             this.secondPix = 735;
             this.thirdPix = 0;
             this.forthPix = 120;
+            this.canonSpin = true;
+            this.canonType =3;
         }
  
         this.mRenderComponent.setElementPixelPositions(this.firstPix, this.secondPix, this.thirdPix, this.forthPix);
@@ -38,7 +53,12 @@ class Gun extends engine.GameObject {
         this.die = false;
         this.size = this.mRenderComponent.getXform().getSize();
 
+
         this.shouldBeDestroyedV = false;
+     
+        
+        
+        //Object movement direction and speed 
         this.downRight;
         this.downLeft;
         this.topRight;
@@ -54,8 +74,8 @@ class Gun extends engine.GameObject {
         this.uP = true;
         this.side = true;
 
-        this.isChild = false;//this.mRenderComponent.getPerentingStatus();
-
+        this.isChild = false;
+    
         
     }
 
