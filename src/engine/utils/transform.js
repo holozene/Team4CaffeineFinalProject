@@ -88,11 +88,11 @@ class Transform {
 
     // sets the transform values based on a matrix
     setTRSMatrix(matrix) {
-        let translate = vec3.fromValues(0, 0, 0);
+        let translate = vec3.create();
         mat4.getTranslation(translate, matrix);
         this.set3DPosition(translate[0], translate[1], translate[2]);
 
-        let scale = vec3.fromValues(0, 0, 0);
+        let scale = vec3.create();
         mat4.getScaling(scale, matrix);
         this.setSize(scale[0], scale[1]);
 

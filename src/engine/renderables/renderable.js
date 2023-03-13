@@ -15,60 +15,60 @@ class Renderable {
         this.mShader = shaderResources.getConstColorShader();  // get the constant color shader
         this.mXform = new Transform(); // transform that moves this object around
         this.mColor = [1, 1, 1, 1];    // color of pixel
-        this.mParentXform = new Transform(); // the default transform will not affect the object, but if it is overridden, this object will be offset by the transform
-        this.mChildren = 1;
-        this.isChild = false;
-        this.test = 0;
+        this.mParentXform = null; // the default transform will not affect the object, but if it is overridden, this object will be offset by the transform
     }
 
     draw(camera) {
         let gl = glSys.get();
-        // todo: for efficency we could by default set mParentXform to null and only perform this math if necessary
-        let matrix = mat4.create()
-        mat4.multiply(matrix, this.mParentXform.getTRSMatrix(), this.mXform.getTRSMatrix())
+        let matrix = null;
+        if (this.mParentXform === null) {
+            matrix = this.mXform.getTRSMatrix();
+        }
+        else {
+            matrix = mat4.create();
+            matrix = this._addTransforms(this.mParentXform, this.mXform).getTRSMatrix();
+        }
         this.mShader.activate(this.mColor, matrix, camera.getCameraMatrix());  // always activate the shader first!
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
+    //todo: might need to tweak this method based on desired inheritances
+    _addTransforms(parent, child) {
+        let transform = new Transform();
+        transform.setPosition(
+            parent.getXPos() + child.getXPos(),
+            parent.getYPos() + child.getYPos());
+        transform.setZPos(parent.getZPos() + child.getZPos());
+        transform.setSize(
+            parent.getWidth() * child.getWidth(),
+            parent.getHeight() * child.getHeight());
+        transform.setRotationInRad(/*parent.getRotationInRad() + */ child.getRotationInRad());
+        return transform;
+    }
 
-
-     increaseChildren() {
-         if (this.mChildren == 0) {    
-         }
-         
-         this.mChildren++;
-     }
-     decreaseChildren() {
-         this.mChildren--;
-     }
-
-   
     getXform() {
-         if(!this.mParentXform) return this.mXform;
-         let xform = new Transform();
-         
-         //xform.setTRSMatrix(mat4);
-         if (this.mChildren > 0) {
-             return this.mParentXform
-         }
+        // let xform = new Transform();
+
+        //xform.setTRSMatrix(mat4);
+        // if (this.mParentXform !== null) {
+        //     return this.mParentXform;
+        // }
         return this.mXform;
     }
-    getParentXform() { 
-        this.mChildren++;
+    getParentXform() {
         return this.mParentXform;
-    
     }
     setColor(color) { this.mColor = color; }
     getColor() { return this.mColor; }
-    
-   
-     getPerentingStatus(){
-         return this.ischild; 
-     }
-    setAsChild(){
-        this.ischild = true; 
-     }
-     setParentXform(mXform){   
-         this.mXform = mXform;
+
+    isChild() {
+        return this.mParentXform !== null;
+    }
+    setParentXform(xform) {
+        this.mParentXform = xform;
+        // debugger
+    }
+    clearParentXform() {
+        this.mParentXform = null;
     }
 
 

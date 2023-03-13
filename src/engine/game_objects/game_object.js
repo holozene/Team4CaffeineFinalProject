@@ -6,6 +6,7 @@
  */
 "use strict";
 import BoundingBox from "../utils/bounding_box.js";
+import Transform from "../utils/transform.js";
 
 class GameObject {
     constructor(renderable) {
@@ -17,25 +18,19 @@ class GameObject {
         this.mDrawRigidShape = false;
         this.mParent = null;
         this.mChildren = [];
-        this.mChildren2 = [];
-        
+    }
 
-    }
-    incrementChild(){
-       
-    }
     setParent(parent) {
         this.mParent = parent;
         this.mParent.mChildren.push(this);
-        this.mRenderComponent.mParentXform = parent.getXform();
-        
-        
+        this.mRenderComponent.setParentXform(parent.getXform());
+        // new Transform().cloneTo(this.mRenderComponent.getXform());
     }
     getParent() { return this.mParent }
-    setChild(child) { child.setParent(this) }
+    addChild(child) { child.setParent(this) }
     getChildren() { return this.mChildren }
 
-    getParentXform() { return this.mRenderComponent.getParentXform()}
+    getParentXform() { return this.mRenderComponent.getParentXform() }
 
     getXform() { return this.mRenderComponent.getXform(); }
     getBBox() {
@@ -57,23 +52,6 @@ class GameObject {
     toggleDrawRenderable() { this.mDrawRenderable = !this.mDrawRenderable; }
     toggleDrawRigidShape() { this.mDrawRigidShape = !this.mDrawRigidShape; }
 
-   
-   //Taras Work 
-   getPerentingStatus(){
-    return this.mRenderComponent.ischild; 
-   }
-    setAsChild(){
-     this.mRenderComponent.ischild = true; 
-   }
-    setParentXform(mXform){   
-    this.mRenderComponent.mXform = mXform;
-     }
-     
-     addChild(child){
-        this.mChildren2.push(child);
-     }
-
-   
     draw(aCamera) {
         if (this.isVisible()) {
             if (this.mDrawRenderable)
@@ -81,8 +59,8 @@ class GameObject {
             if ((this.mRigidBody !== null) && (this.mDrawRigidShape))
                 this.mRigidBody.draw(aCamera);
         }
-        this.mChildren.forEach(child => {child.draw(aCamera)});
-  
+
+        this.mChildren.forEach(child => { child.draw(aCamera) });
     }
 
     update() {
@@ -90,23 +68,7 @@ class GameObject {
         if (this.mRigidBody !== null)
             this.mRigidBody.update();
 
-                //taras work
-       // for(let i = 0 ; i< this.mChildren.length; i++){      
-       
-        //}
-    }
-    update2(aCamera) {
-        // simple default behavior
-        if (this.mRigidBody !== null)
-            this.mRigidBody.update();
-
-                //taras work
-        for(let i = 0 ; i< this.mChildren2.length; i++){      
-    
-            this.mChildren2[i].update(aCamera);
-            this.mChildren2[i].mRenderComponent.draw(aCamera);   
-            //draw(aCamera)
-        }
+        // this.mChildren.forEach(child => { child.update(aCamera) });
     }
 
     // Support for per-pixel collision
