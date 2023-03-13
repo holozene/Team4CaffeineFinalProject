@@ -9,7 +9,7 @@ class Minion extends engine.GameObject {
         this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(atX, atY);
-        this.mRenderComponent.getXform().setSize(10, 10);
+        this.mRenderComponent.getXform().setSize(30, 30);
         this.mRenderComponent.setElementPixelPositions(100, 230, 0, 100);
         this.mRenderComponent.getXform().setRotationInDegree(180);
               // horizontal padding in between

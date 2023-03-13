@@ -22,8 +22,8 @@ class DyePack extends engine.GameObject {
     this.mRenderComponent.setElementPixelPositions(375, 450, 0, 175) ;
     this.mRenderComponent.getXform().setRotationInDegree(90);
 
-    // this.timeOfLife = 2000;
-    this.lifeSpan = 1000;
+    this.timeOfLife = 2000;
+    this.lifeSpan = this.createLifespan();
     this.shouldBeDestroyedV = false;
 
 
@@ -65,9 +65,9 @@ class DyePack extends engine.GameObject {
     }
   }
 
-  // createLifespan() {
-  //   return Math.random() * this.timeOfLife;
-  // }
+  createLifespan() {
+    return Math.random() * this.timeOfLife;
+  }
 
   collision() {
     this.speed = 0.1;

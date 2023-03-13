@@ -48,20 +48,6 @@ class Gun extends engine.GameObject {
         // this.size = this.mRenderComponent.getXform().getSize();
 
         this.shouldBeDestroyedV = false;
-        this.downRight;
-        this.downLeft;
-        this.topRight;
-        this.topLeft;
-
-        this.directionMovingX = 1.0;
-        this.directionMovingY = 1.0;
-
-        this.speed = .5;
-        this.randomSpeedX = 0; //Math.random() * this.speed;
-        this.randomSpeedY = 0; //Math.random() * this.speed;
-
-        this.uP = true;
-        this.side = true;
     }
 
     update(x, y) {

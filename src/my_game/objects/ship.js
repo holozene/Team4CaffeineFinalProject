@@ -58,7 +58,6 @@ class Ship extends engine.GameObject {
             xform.incRotationByDegree(-1);
         }
 
-
         //     for (let i = 0; i < this.guns.length; i++) {
         //         this.guns[i].update(this.mCamera);
 

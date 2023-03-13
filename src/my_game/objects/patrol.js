@@ -9,20 +9,12 @@ import Interpolate from "../../engine/utils/lerp.js";
 class Patrol extends engine.GameObject {
     constructor(kMinionPortal, spriteTexture2, spriteTexture3, atX, atY) {
         super(null);
-        this.kDelta = 0.2;
-
-        this.pWCCollisionLeft = false;
-        this.pWCCollisionRight = false;
-        this.pWCCollisionTop = false;
-        this.pWCCollisionBottom = false;
-
-        this.shouldBeDestroyedV = false;
 
         this.boundingBox;
 
         this.head = new Brain(spriteTexture3, atX, atY);
-        this.topObject = new Minion(spriteTexture2, atX + 10, atY + 6);
-        this.botObject = new Minion(spriteTexture2, atX + 10, atY - 6);
+        this.topObject = new Minion(spriteTexture2, atX + 30, atY + 18);
+        this.botObject = new Minion(spriteTexture2, atX + 30, atY - 18);
 
         this.topObjectPosition;
         this.topObjectSize = this.topObject.getXform().getSize();
@@ -53,6 +45,10 @@ class Patrol extends engine.GameObject {
         this.interpolateTopY = new Interpolate(this.head.getXform().getYPos() + 6, 120, 0.05);
         this.interpolateBotX = new Interpolate(this.head.getXform().getXPos() + 10, 120, 0.05);
         this.interpolateBotY = new Interpolate(this.head.getXform().getYPos() - 6, 120, 0.05);
+
+         this.canon3 = false; 
+         this.canonFire = false;
+         this.canonSpin = false;
     }
 
     drawInPatrol(camera) {
@@ -60,6 +56,10 @@ class Patrol extends engine.GameObject {
         this.head.draw(camera);
         this.topObject.draw(camera);
         this.botObject.draw(camera);
+    }
+    getHeadXForm(){
+
+        return this.head.getXform();
     }
 
     update(camera) {
@@ -72,10 +72,10 @@ class Patrol extends engine.GameObject {
             this.head.getXform().getXPos() + (this.randomSpeedX * this.directionMovingX),
             this.head.getXform().getYPos() + (this.randomSpeedY * this.directionMovingY));
 
-        this.interpolateTopX.setFinal(this.head.getXform().getXPos() + 10);
-        this.interpolateTopY.setFinal(this.head.getXform().getYPos() + 6);
-        this.interpolateBotX.setFinal(this.head.getXform().getXPos() + 10);
-        this.interpolateBotY.setFinal(this.head.getXform().getYPos() - 6);
+        this.interpolateTopX.setFinal(this.head.getXform().getXPos() + 30);
+        this.interpolateTopY.setFinal(this.head.getXform().getYPos() + 18);
+        this.interpolateBotX.setFinal(this.head.getXform().getXPos() + 30);
+        this.interpolateBotY.setFinal(this.head.getXform().getYPos() - 18);
         this.topObject.getXform().setXPos(this.interpolateTopX.get());
         this.topObject.getXform().setYPos(this.interpolateTopY.get());
         this.botObject.getXform().setXPos(this.interpolateBotX.get());
