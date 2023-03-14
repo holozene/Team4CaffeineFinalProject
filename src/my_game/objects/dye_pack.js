@@ -7,7 +7,7 @@ import Oscillate from "../../engine/utils/oscillate.js";
 
 
 class DyePack extends engine.GameObject {
-  constructor(spriteTexture, x, y, direc) {
+  constructor(spriteTexture, x, y, angle) {
     super(null);
 
     this.kDelta = 0.5;
@@ -17,7 +17,7 @@ class DyePack extends engine.GameObject {
     this.mRenderComponent.setColor([1, 1, 1, 0.1]);
     this.mRenderComponent.getXform().setPosition(x, y);
 
-    this.direction = direc;
+    this.angle = angle;
     this.mRenderComponent.getXform().setSize(10, 20);
     this.mRenderComponent.setElementPixelPositions(375, 450, 0, 175) ;
     this.mRenderComponent.getXform().setRotationInDegree(90);
@@ -39,7 +39,8 @@ class DyePack extends engine.GameObject {
 
   update(camera) {
     // Camera for size
-    this.mRenderComponent.getXform().incXPosBy(this.speed * this.direction);
+    this.mRenderComponent.getXform().incYPosBy(this.speed * Math.sin(this.angle));
+    this.mRenderComponent.getXform().incXPosBy(this.speed * Math.cos(this.angle));
 
     if (engine.input.isKeyPressed(engine.input.keys.D)) {
       this.speed -= 0.1;

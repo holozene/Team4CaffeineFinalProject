@@ -11,14 +11,14 @@ class Ship extends engine.GameObject {
 
         this.mRenderComponent = new engine.SpriteRenderable(spriteTexture);
         this.mRenderComponent.setColor([1, 1, 1, 0]);
-        this.mRenderComponent.getXform().setPosition(600, 600);
-        this.mRenderComponent.getXform().setSize(100, 100);
-        this.mRenderComponent.setElementPixelPositions(0, 100, 0, 100);
+        this.mRenderComponent.getXform().setPosition(700, 600);
+        this.mRenderComponent.getXform().setSize(200, 200);
+        this.mRenderComponent.setElementPixelPositions(0, 100, 0, 97);
 
         this.interpolateX = new Interpolate(this.mRenderComponent.getXform().getXPos(), 420, 0.05);
         this.interpolateY = new Interpolate(this.mRenderComponent.getXform().getYPos(), 420, 0.05);
 
-        this.mTurret = new Gun(spriteTexture, 10, 10, 0);
+        this.mTurret = new Gun(spriteTexture, 0.1, 0.1, 0);
         this.mTurret.setParent(this);
         // this.mTurret.getXform().setYPos(600);
 
@@ -57,20 +57,6 @@ class Ship extends engine.GameObject {
         if (engine.input.isKeyPressed(engine.input.keys.D)) {
             xform.incRotationByDegree(-1);
         }
-
-        //     for (let i = 0; i < this.guns.length; i++) {
-        //         this.guns[i].update(this.mCamera);
-
-        //         if (this.guns[i].shouldBeDestroyedV)
-        //             this.guns.splice(i, 1);
-
-        //    ///.________________________________setAsChild()
-        //         if (this.mShip.pixelTouches(this.guns[i], this.pixelTouchesArray)) {
-        //             this.guns[i].isChild = true; 
-        //             this.mShip.addChild(this.guns[i]);
-        //             this.guns.splice(i, 1);            
-        //          }
-        //     }
     }
 
     draw(camera) {

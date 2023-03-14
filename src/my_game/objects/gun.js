@@ -23,21 +23,21 @@ class Gun extends engine.GameObject {
 
         switch (type) {
             case 0:
-                this.firstPix = 250;
-                this.secondPix = 350;
-                this.thirdPix = 0;
-                this.forthPix = 100;
+                this.firstPix = 217;
+                this.secondPix = 342;
+                this.thirdPix = 5;
+                this.forthPix = 135;
                 break;
             case 1:
                 this.firstPix = 490;
                 this.secondPix = 580;
-                this.thirdPix = 0;
+                this.thirdPix = 40;
                 this.forthPix = 100;
                 break;
             case 2:
                 this.firstPix = 590;
                 this.secondPix = 735;
-                this.thirdPix = 0;
+                this.thirdPix = 15;
                 this.forthPix = 120;
                 break;
         }
@@ -48,17 +48,11 @@ class Gun extends engine.GameObject {
         // this.size = this.mRenderComponent.getXform().getSize();
 
         this.shouldBeDestroyedV = false;
+        this.targetMouse = false;
     }
 
     update(x, y) {
-        if (engine.input.isKeyClicked(engine.input.keys.X)) {
-            console.log(this.mRenderComponent.getXform().getXPos(),
-                this.mRenderComponent.getXform().getYPos());
-        }
-
-        // if (this.mRenderComponent.die) {}
-
-        let delta = 1;
+        let delta = 0.01;
         let xform = this.mRenderComponent.getXform();
         if (engine.input.isKeyPressed(engine.input.keys.Up)) {
             xform.incYPosBy(delta);
@@ -73,19 +67,35 @@ class Gun extends engine.GameObject {
             xform.incXPosBy(delta);
         }
 
-        let parentXform = this.mRenderComponent.getParentXform();
 
-        if (x) {
-            // x and y are the mouse position
-            // console.log(xform);
-            const Xdelta = parentXform.getXPos() + xform.getXPos() - x;
-            const Ydelta = parentXform.getYPos() + xform.getYPos() - y;
-            let slope = Ydelta / Xdelta;
-            if (Xdelta >= 0) xform.setRotationInRad(Math.atan(slope) + Math.PI);
-            else xform.setRotationInRad(Math.atan(slope));
+        // x and y are the mouse position
+        // handle the position not being set
+        if (this.targetMouse) xform.setRotationInRad(this.aimAt(x, y, xform));
+
+        if (engine.input.isKeyClicked(engine.input.keys.F)) {
+            this.targetMouse = !this.targetMouse;
         }
     }
 
+
+
+    aimAt(x, y, xform) {
+        let parentXform = this.mRenderComponent.getParentXform();
+        let worldXform = this.mRenderComponent.getGlobalXform();
+        let worldX = worldXform.getXPos();
+        let worldY = worldXform.getYPos();
+        if (!x)
+            x = 0;
+        if (!y)
+            y = 0;
+        const Xdelta = worldX - x;
+        const Ydelta = worldY - y;
+        let angle = Math.atan(Ydelta / Xdelta);
+        if (Xdelta >= 0)
+            return angle + Math.PI - parentXform.getRotationInRad();
+        else
+            return angle - parentXform.getRotationInRad();
+    }
 
     // draw(camera) {
     //     super.draw(camera);

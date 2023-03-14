@@ -17,7 +17,7 @@ class MyGame extends engine.Scene {
         super();
 
         this.stwarSprite = "assets/result.png";
-        this.kBg = "assets/star.jpg";
+        this.kBg = "assets/galaxy.png";
 
         this.tempSTR = "XX";
         // The camera to view the scene
@@ -71,8 +71,8 @@ class MyGame extends engine.Scene {
 
         // Large background image
         let bgR = new engine.SpriteRenderable(this.kBg);
-        bgR.setElementPixelPositions(0, 5120, 0, 2880);
-        bgR.getXform().setSize(3000, 1000);
+        bgR.setElementPixelPositions(0, 1200, 0, 800);
+        bgR.getXform().setSize(1000, 666.67);
         bgR.getXform().setPosition(1000, 600);
         this.mBg = new engine.GameObject(bgR);
         engine.defaultResources.setGlobalAmbientIntensity(4);
@@ -84,10 +84,6 @@ class MyGame extends engine.Scene {
         this.mMsg.setColor([.1, .1, .1, .1]);
         this.mMsg.getXform().setPosition(300, 300);
         this.mMsg.setTextHeight(30);
-
-        // create objects to simulate various motions 
-        this.mBounce = new engine.Oscillate(40.5, 40, 60); // delta, freq, duration  
-        this.shake = new Shake(this.mShip.getXform().getXPos(), this.mShip.getXform().getYPos(), 5, 100);
     }
 
     _drawCamera(camera) {
@@ -193,70 +189,63 @@ class MyGame extends engine.Scene {
         }
 
         // inputs
-        if (engine.input.isKeyClicked(engine.input.keys.Space)) {
-            this.dyePacks.push(new DyePack(this.stwarSprite, this.mShip.getXform().getXPos(), this.mShip.getXform().getYPos()));
-        }
+        // if (engine.input.isKeyClicked(engine.input.keys.C)) {
+        //     this.xPoint = (2000);
+        //     this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
+        //     this.patrols.push(new Patrol(this.stwarSprite, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
+        // }
 
-        if (engine.input.isKeyClicked(engine.input.keys.C)) {
-            this.xPoint = (2000);
-            this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
-            this.patrols.push(new Patrol(this.stwarSprite, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
-        }
+        // if (engine.input.isKeyClicked(engine.input.keys.D)) {
+        //     this.xPoint = (1000);
+        //     this.yPoint = (600);
+        //     this.guns.push(new Gun(this.stwarSprite, this.xPoint, this.yPoint));
+        // }
 
-        if (engine.input.isKeyClicked(engine.input.keys.D)) {
-            this.xPoint = (1000);
-            this.yPoint = (600);
-            this.guns.push(new Gun(this.stwarSprite, this.xPoint, this.yPoint));
-        }
+        // for (let i = 0; i < this.guns.length; i++) {
+        //     this.guns[i].update();
 
+        //     if (this.guns[i].shouldBeDestroyedV)
+        //         this.guns.splice(i, 1);
 
-        for (let i = 0; i < this.guns.length; i++) {
-            this.guns[i].update();
+        //     if (this.mShip.pixelTouches(this.guns[i], this.pixelTouchesArray)) {
+        //         this.mShip.addChild(this.guns[i]);
+        //         //updating the ship about the gun being used 
+        //         if (this.guns[i].canon3) {
+        //             this.mShip.canon3 = true;
+        //         }
+        //         if (this.guns[i].canonFire) {
+        //             this.mShip.canonFire = true;
+        //         }
+        //         if (this.guns[i].canonSpin) {
+        //             this.mShip.canonSpin = true;
+        //         }
 
-            if (this.guns[i].shouldBeDestroyedV)
-                this.guns.splice(i, 1);
+        //         this.guns.splice(i, 1);
+        //     }
+        // }
 
-            if (this.mShip.pixelTouches(this.guns[i], this.pixelTouchesArray)) {
-                this.mShip.addChild(this.guns[i]);
-                //updating the ship about the gun being used 
-                if (this.guns[i].canon3) {
-                    this.mShip.canon3 = true;
-                }
-                if (this.guns[i].canonFire) {
-                    this.mShip.canonFire = true;
-                }
-                if (this.guns[i].canonSpin) {
-                    this.mShip.canonSpin = true;
-                }
-
-                this.guns.splice(i, 1);
-            }
-        }
-
-        if (engine.input.isKeyClicked(engine.input.keys.P)) {
-            if (this.autoSpawnString === "True") {
-                this.autoSpawnString = "False"
-            } else {
-                this.autoSpawnString = "True";
-            }
-        }
-        if (this.autoSpawnString === "True") {
-            if (Math.random() < .005) {
-                this.xPoint = (2000);
-                this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
-                this.patrols.push(new Patrol(this.stwarSprite, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
-            }
-        }
-
-        if (!this.mBounce.done()) {
-            let d = this.mBounce.getNext();
-            this.mShip.getXform().incXPosBy(d);
-        }
+        // if (engine.input.isKeyClicked(engine.input.keys.P)) {
+        //     if (this.autoSpawnString === "True") {
+        //         this.autoSpawnString = "False"
+        //     } else {
+        //         this.autoSpawnString = "True";
+        //     }
+        // }
+        // if (this.autoSpawnString === "True") {
+        //     if (Math.random() < .005) {
+        //         this.xPoint = (2000);
+        //         this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
+        //         this.patrols.push(new Patrol(this.stwarSprite, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
+        //     }
+        // }
 
         // let msg = "";
         // msg += " X=" + engine.input.getMousePosX() + " Y=" + engine.input.getMousePosY() + "      Auto Spawn: " + this.autoSpawnString +
         //     "      Patrols: " + this.patrols.length + "  DyePacks: " + this.dyePacks.length;
         // this.mMsg.setText(msg);
+
+        
+        // if (engine.input.isKeyClicked(engine.input.keys.P)) {
 
     }
 }
