@@ -34,11 +34,10 @@ class Renderable {
     
     getGlobalXform() {
         let transform = new Transform();
-        let zero = vec2.fromValues(0, 0);
         let pos = vec2.fromValues(
             this.mXform.getXPos() * this.mParentXform.getWidth(),
             this.mXform.getYPos() * this.mParentXform.getHeight());
-        vec2.rotateWRT(pos, pos, this.mParentXform.getRotationInRad(), zero)
+        vec2.rotateWRT(pos, pos, this.mParentXform.getRotationInRad(), vec2.fromValues(0, 0))
         transform.setPosition(
             this.mParentXform.getXPos() + pos[0],
             this.mParentXform.getYPos() + pos[1]);

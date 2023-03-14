@@ -31,6 +31,7 @@ class GameObject {
     getChildren() { return this.mChildren }
 
     getParentXform() { return this.mRenderComponent.getParentXform() }
+    getGlobalXform() { return this.mRenderComponent.getGlobalXform() }
 
     getXform() { return this.mRenderComponent.getXform(); }
     getBBox() {
