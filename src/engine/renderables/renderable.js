@@ -26,32 +26,31 @@ class Renderable {
         }
         else {
             matrix = mat4.create();
-            matrix = this._addTransforms(this.mParentXform, this.mXform).getTRSMatrix();
+            matrix = this.getGlobalXform().getTRSMatrix();
         }
         this.mShader.activate(this.mColor, matrix, camera.getCameraMatrix());  // always activate the shader first!
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
-    //todo: might need to tweak this method based on desired inheritances
-    _addTransforms(parent, child) {
+    
+    getGlobalXform() {
         let transform = new Transform();
+        let zero = vec2.fromValues(0, 0);
+        let pos = vec2.fromValues(
+            this.mXform.getXPos() * this.mParentXform.getWidth(),
+            this.mXform.getYPos() * this.mParentXform.getHeight());
+        vec2.rotateWRT(pos, pos, this.mParentXform.getRotationInRad(), zero)
         transform.setPosition(
-            parent.getXPos() + child.getXPos(),
-            parent.getYPos() + child.getYPos());
-        transform.setZPos(parent.getZPos() + child.getZPos());
+            this.mParentXform.getXPos() + pos[0],
+            this.mParentXform.getYPos() + pos[1]);
+        transform.setZPos(this.mParentXform.getZPos() + this.mXform.getZPos());
         transform.setSize(
-            parent.getWidth() * child.getWidth(),
-            parent.getHeight() * child.getHeight());
-        transform.setRotationInRad(/*parent.getRotationInRad() + */ child.getRotationInRad());
+            this.mParentXform.getWidth() * this.mXform.getWidth(),
+            this.mParentXform.getHeight() * this.mXform.getHeight());
+        transform.setRotationInRad(this.mParentXform.getRotationInRad() +  this.mXform.getRotationInRad());
         return transform;
     }
 
     getXform() {
-        // let xform = new Transform();
-
-        //xform.setTRSMatrix(mat4);
-        // if (this.mParentXform !== null) {
-        //     return this.mParentXform;
-        // }
         return this.mXform;
     }
     getParentXform() {
