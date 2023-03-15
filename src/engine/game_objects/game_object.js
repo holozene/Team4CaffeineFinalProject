@@ -18,6 +18,7 @@ class GameObject {
         this.mDrawRigidShape = false;
         this.mParent = null;
         this.mChildren = [];
+        this.isChild = true;
     }
 
     setParent(parent) {
@@ -25,6 +26,7 @@ class GameObject {
         this.mParent.mChildren.push(this);
         this.mRenderComponent.setParentXform(parent.getXform());
         // new Transform().cloneTo(this.mRenderComponent.getXform());
+        this.isChild = false;
     }
     getParent() { return this.mParent }
     addChild(child) { child.setParent(this) }

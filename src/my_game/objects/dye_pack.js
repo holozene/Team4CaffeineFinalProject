@@ -20,12 +20,12 @@ class DyePack extends engine.GameObject {
     this.angle = angle;
     this.mRenderComponent.getXform().setSize(10, 20);
     this.mRenderComponent.setElementPixelPositions(375, 450, 0, 175) ;
-    this.mRenderComponent.getXform().setRotationInDegree(90);
+    this.mRenderComponent.getXform().setRotationInRad(angle + (Math.PI)/2);
 
     // this.timeOfLife = 2000;
     this.lifeSpan = 1000;
     this.shouldBeDestroyedV = false;
-
+    
 
     this.units = 600;
     this.frames = 60;
@@ -36,9 +36,12 @@ class DyePack extends engine.GameObject {
 
     this.mBounce = new engine.Oscillate(1.5, 10, 100);
   }
+  
+  
 
   update(camera) {
     // Camera for size
+    //this.mRenderComponent.getXform().incYPosBy(this.speed * 1);
     this.mRenderComponent.getXform().incYPosBy(this.speed * Math.sin(this.angle));
     this.mRenderComponent.getXform().incXPosBy(this.speed * Math.cos(this.angle));
 

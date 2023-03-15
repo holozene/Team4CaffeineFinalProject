@@ -85,7 +85,7 @@ class Patrol extends engine.GameObject {
         this.interpolateBotX.update();
         this.interpolateBotY.update();
 
-        if (this.head.getXform().getXPos() > camera.getWCWidth() + 10) this.head.die = true;
+       // if (this.head.getXform().getXPos() > camera.getWCWidth() + 10) this.head.die = true;
         if (this.topObject.die || this.botObject.die || this.head.die) {
             this.shouldBeDestroyedV = true;
         }

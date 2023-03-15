@@ -10,6 +10,7 @@ class Gun extends engine.GameObject {
         this.mRenderComponent.setColor([1, 1, 1, 0]);
         this.mRenderComponent.getXform().setPosition(x, y);
         this.getXform().setSize(0.2, 0.2);
+     
 
         if (type === undefined) {
             let randomN = Math.random();
@@ -20,6 +21,10 @@ class Gun extends engine.GameObject {
             else
                 type = 2;
         }
+        
+      this.canon3  = false;
+      this.canonFire = false;
+       this.canonSpin = false;
 
         switch (type) {
             case 0:
@@ -27,18 +32,21 @@ class Gun extends engine.GameObject {
                 this.secondPix = 342;
                 this.thirdPix = 5;
                 this.forthPix = 135;
+                this.canon3  = true;
                 break;
             case 1:
                 this.firstPix = 490;
                 this.secondPix = 580;
                 this.thirdPix = 40;
                 this.forthPix = 100;
+                this.canonFire = true;
                 break;
             case 2:
                 this.firstPix = 590;
                 this.secondPix = 735;
                 this.thirdPix = 15;
                 this.forthPix = 120;
+                this.canonSpin = true;
                 break;
         }
 
@@ -48,9 +56,18 @@ class Gun extends engine.GameObject {
         // this.size = this.mRenderComponent.getXform().getSize();
 
         this.shouldBeDestroyedV = false;
-        this.targetMouse = false;
+        this.targetMouse = true;
     }
+    setGunSize(){
+        this.getXform().setSize(20, 20);
 
+    }
+    drawInGuns(camera) {
+        // remember to update this.mRenderComponent's animation
+        this.mRenderComponent.draw(camera);
+       
+       
+    }
     update(x, y) {
         let delta = 0.01;
         let xform = this.mRenderComponent.getXform();

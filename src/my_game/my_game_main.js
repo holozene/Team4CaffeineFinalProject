@@ -11,6 +11,7 @@ import DyePackRed from "./objects/dye_pack_red.js";
 import Patrol from "./objects/patrol.js";
 import Ship from "./objects/ship.js";
 import Gun from "./objects/gun.js";
+import MyGame2 from "./my_game_main2.js";
 
 class MyGame extends engine.Scene {
     constructor() {
@@ -119,6 +120,10 @@ class MyGame extends engine.Scene {
         this.mCamera.update();
         this.mShip.update(this.mCamera, this.dyePacks);
 
+        
+       
+       
+       
         // update cannon shots
         for (let i = 0; i < this.dyePacks.length; i++) {
             this.dyePacks[i].update(this.mCamera);
@@ -188,65 +193,19 @@ class MyGame extends engine.Scene {
             this.dyePacks.push(new DyePack(this.stwarSprite, this.mShip.getXform().getXPos(), this.mShip.getXform().getYPos(), 1));
         }
 
-        // inputs
-        // if (engine.input.isKeyClicked(engine.input.keys.C)) {
-        //     this.xPoint = (2000);
-        //     this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
-        //     this.patrols.push(new Patrol(this.stwarSprite, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
-        // }
 
-        // if (engine.input.isKeyClicked(engine.input.keys.D)) {
-        //     this.xPoint = (1000);
-        //     this.yPoint = (600);
-        //     this.guns.push(new Gun(this.stwarSprite, this.xPoint, this.yPoint));
-        // }
+        if(engine.input.isKeyClicked(engine.input.keys.N) === true){
+            this.next();
+        }
 
-        // for (let i = 0; i < this.guns.length; i++) {
-        //     this.guns[i].update();
+    }
+   
+    next() { 
+        super.next();  // this must be called!
 
-        //     if (this.guns[i].shouldBeDestroyedV)
-        //         this.guns.splice(i, 1);
-
-        //     if (this.mShip.pixelTouches(this.guns[i], this.pixelTouchesArray)) {
-        //         this.mShip.addChild(this.guns[i]);
-        //         //updating the ship about the gun being used 
-        //         if (this.guns[i].canon3) {
-        //             this.mShip.canon3 = true;
-        //         }
-        //         if (this.guns[i].canonFire) {
-        //             this.mShip.canonFire = true;
-        //         }
-        //         if (this.guns[i].canonSpin) {
-        //             this.mShip.canonSpin = true;
-        //         }
-
-        //         this.guns.splice(i, 1);
-        //     }
-        // }
-
-        // if (engine.input.isKeyClicked(engine.input.keys.P)) {
-        //     if (this.autoSpawnString === "True") {
-        //         this.autoSpawnString = "False"
-        //     } else {
-        //         this.autoSpawnString = "True";
-        //     }
-        // }
-        // if (this.autoSpawnString === "True") {
-        //     if (Math.random() < .005) {
-        //         this.xPoint = (2000);
-        //         this.yPoint = (Math.random() * this.mCamera.getWCHeight() / 2) + (this.mCamera.getWCHeight() / 2);
-        //         this.patrols.push(new Patrol(this.stwarSprite, this.stwarSprite, this.stwarSprite, this.xPoint, this.yPoint));
-        //     }
-        // }
-
-        // let msg = "";
-        // msg += " X=" + engine.input.getMousePosX() + " Y=" + engine.input.getMousePosY() + "      Auto Spawn: " + this.autoSpawnString +
-        //     "      Patrols: " + this.patrols.length + "  DyePacks: " + this.dyePacks.length;
-        // this.mMsg.setText(msg);
-
-        
-        // if (engine.input.isKeyClicked(engine.input.keys.P)) {
-
+        // next scene to run   
+        let nextLevel = new MyGame2();  // next level to be loaded
+        nextLevel.start();
     }
 }
 
